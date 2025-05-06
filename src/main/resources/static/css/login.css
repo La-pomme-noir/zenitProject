@@ -1,0 +1,46 @@
+@import url(normalize.css);
+@import url(global.css);
+
+/* LOGIN-REGISTER */
+fieldset {
+    border: none;
+}
+.login {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.login__gif {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+.login__title {
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--negro);
+    text-align: center;
+}
+.login__label {
+    display: block;
+    font-weight: bold;
+}
+.login__input {
+    padding: 1rem;
+    width: 90%;
+    margin-bottom: 1rem;
+    border-radius: .5rem;
+}
+.login__button {
+    background-color: var(--button);
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-weight: bold;
+}
+.login__button:hover {
+    background-color: var(--navbar);
+    color: var(--fondo);
+}
+

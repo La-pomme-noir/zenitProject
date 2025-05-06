@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/admin.css">
+<title>Zénit Eventos Administrador-Perfil</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
+            <nav class="header__navbar">
+                <a href="/index.html" class="navbar__links">Inicio</a>
+                <a href="/event.html" class="navbar__links">Eventos</a>
+                <a href="/admin.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
+
+    <main class="contenedor">
+        <div class="admin">
+            <h2 class="title__sections">Panel Administrador</h2>
+            <div class="admin-create shadow-card">
+                <h3 class="admin-create__title">
+                    Datos Personales
+                </h3>
+
+                <img class="admin-profile__img" src="./img/icon-profile1.png" alt="Icon Profile">
+
+                <label for="adminNombre" class="admin-create__label">Nombre Completo <i class="fa-solid fa-users-rectangle"></i></label>
+                <input type="text" id="adminNombre" class="admin-create__input" readonly>
+
+                <label for="adminCorreo" class="admin-create__label">Correo <i class="fa-solid fa-envelope"></i></label>
+                <input type="email" id="adminCorreo" class="admin-create__input" readonly>
+
+            </div> <!--Fin admin-create-->
+        </div> <!--Fin admin-->
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        async function loadAdminProfile() {
+            try {
+                // Obtener el perfil del administrador autenticado
+                const response = await fetch('/api/admins/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token') || ''}` // Si usas JWT; ajusta según tu autenticación
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error al obtener el perfil: ${response.statusText}`);
+                }
+
+                const profile = await response.json();
+                document.getElementById('adminNombre').value = profile.nombre || 'N/A'; // Nota: El endpoint actual no devuelve "nombre", ajustaremos esto
+                document.getElementById('adminCorreo').value = profile.correo || 'N/A';
+
+            } catch (error) {
+                console.error('Error al cargar el perfil del administrador:', error);
+                alert('Error al cargar el perfil: ' + error.message);
+            }
+        }
+
+        // Cargar el perfil al iniciar la página
+        window.onload = loadAdminProfile;
+    </script>
+</body>
+</html>

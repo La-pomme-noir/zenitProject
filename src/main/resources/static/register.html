@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/login.css">
+<title>Zénit Eventos Register</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
+            <nav class="header__navbar">
+                <a href="/index.html" class="navbar__links">Inicio</a>
+                <a href="/event.html" class="navbar__links">Eventos</a>
+                <a href="/login.html" class="navbar__links">Iniciar Sesión</a>
+                <a href="/register.html" class="navbar__links navbar__links--activo">Registrarse</a>
+            </nav>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
+
+    <main class="contenedor">
+        <div class="login shadow-card">
+            <div class="login__gif">
+                <img src="./gif/summit.gif" alt="Register gif">
+            </div> <!--Fin login__gif-->
+
+            <div class="login__form">
+                <form id="registerForm">
+                    <fieldset>
+                        <legend class="login__title">
+                            Regístrate Para Acceder a Todos los Eventos
+                        </legend>
+
+                        <label for="nombre" class="login__label">Nombre Completo <i class="fa-solid fa-user"></i></label>
+                        <input id="nombre" class="login__input" type="text" placeholder="tu nombre" required>
+
+                        <label for="correo" class="login__label">Correo <i class="fa-solid fa-envelope"></i></label>
+                        <input id="correo" class="login__input" type="email" placeholder="correo@gmail.com" required>
+
+                        <label for="password" class="login__label">Contraseña <i class="fa-solid fa-lock"></i></label>
+                        <input id="password" class="login__input" type="password" placeholder="********" required>
+
+                        <label for="role" class="login__label">Rol <i class="fa-solid fa-circle-user"></i></label>
+                        <select id="role" name="role" class="login__input" required>
+                            <option value="" disabled selected>Selecciona un Rol</option>
+							<option value="CLIENTE">Cliente</option>
+                        </select>
+                    </fieldset>
+
+                    <button class="login__button" type="submit">Registrarse <i class="fa-solid fa-user-plus"></i></button>
+                </form>
+            </div> <!--Fin login__form-->
+        </div> <!--Fin login-->
+    </main> 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const correo = document.getElementById('correo').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            try {
+                const response = await fetch('/rest/clientes/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ nombre, correo, password, role }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message || 'Registro exitoso. Por favor, inicia sesión.');
+                    window.location.href = '/login.html';
+                } else {
+                    alert(result.message || 'Error al registrarse. Verifica los datos.');
+                }
+            } catch (error) {
+                alert('Error de conexión. Intenta de nuevo.');
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>

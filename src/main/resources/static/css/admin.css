@@ -1,0 +1,134 @@
+@import url(normalize.css);
+@import url(global.css);
+
+.admin-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+.admin-content__title {
+    font-weight: bold;
+    color: var(--negro);
+    text-align: center;
+}
+.admin-content__parrafo {
+    color: var(--navbar);
+    text-align: justify;
+}
+.custom__button--a {
+    display: block;
+    background-color: var(--button);
+    padding: 1rem;
+    border-radius: .5rem;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+.custom__button--a:hover {
+    background-color: var(--navbar);
+    color: var(--fondo);
+}
+/* ADMIN CREATE USERS */
+.admin-create {
+    margin-bottom: 2rem;
+}
+.admin-create__title {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--negro);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+.admin-create__input {
+    display: block;
+    width: 95%;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: .5rem;
+}
+/* ADMIN PROFILE */
+.admin-profile__img {
+    display: block;
+    margin-bottom: 2rem;
+    position: relative;
+    left: 45%;
+}
+/* ADMIN LISTA */
+.admin-list {
+    padding: 20px;
+}
+
+.admin-list__title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-list__table-container {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-list__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-list__table-header {
+    padding: 12px;
+    text-align: left;
+    background-color: #f8f9fa;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+}
+
+.admin-list__table-row {
+    transition: background-color 0.3s;
+}
+
+.admin-list__table-row:hover {
+    background-color: #f1f1f1;
+}
+
+.admin-list__table-cell {
+    padding: 12px;
+    font-family: 'Open Sans', sans-serif;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-list__action-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.admin-list__action-btn--edit i {
+    color: var(--amarillo);
+}
+
+.admin-list__action-btn--edit:hover {
+    background-color: #ffe082;
+}
+
+.admin-list__action-btn--delete i {
+    color: var(--rojo);
+}
+
+.admin-list__action-btn--delete:hover {
+    background-color: #f8d7da;
+}

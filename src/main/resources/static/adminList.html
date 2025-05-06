@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="./css/admin.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<title>Zénit Eventos - Lista de Usuarios</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
+            <nav class="header__navbar">
+                <a href="/index.html" class="navbar__links">Inicio</a>
+                <a href="/event.html" class="navbar__links">Eventos</a>
+                <a href="/admin.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
+
+    <main class="contenedor">
+        <div class="admin-list">
+            <h2 class="admin-list__title">Lista de Usuarios Registrados</h2>
+            <div class="admin-list__table-container shadow-card">
+                <table class="admin-list__table">
+                    <thead>
+                        <tr>
+                            <th class="admin-list__table-header">Nombre</th>
+                            <th class="admin-list__table-header">Correo</th>
+                            <th class="admin-list__table-header">Rol</th>
+                            <th class="admin-list__table-header">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody" class="admin-list__table-body">
+                        <!-- Datos se cargarán dinámicamente con JavaScript -->
+                    </tbody>
+                </table>
+            </div> <!--Fin admin-list__table-container-->
+        </div> <!--Fin admin-list-->
+    </main>
+
+    <!-- Modal para editar usuario -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editCorreo" name="correo">
+                        <input type="hidden" id="editRolePath" name="rolePath">
+                        <div class="mb-3">
+                            <label for="editNombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="editNombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editPassword" class="form-label">Contraseña (dejar en blanco para no cambiar)</label>
+                            <input type="password" class="form-control" id="editPassword" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRoleSelect" class="form-label">Rol</label>
+                            <select class="form-control" id="editRoleSelect" name="role" required>
+                                <option value="ADMIN">Administrador</option>
+                                <option value="CLIENTE">Cliente</option>
+                                <option value="ORGANIZADOR">Organizador</option>
+                                <option value="PROVEEDOR">Proveedor</option>
+                                <option value="INVITADO">Invitado</option>
+                                <option value="SUPERVISOR">Supervisor</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        // Mapeo de roles a rutas
+        const roleToPath = {
+            'ADMIN': 'admins',
+            'CLIENTE': 'clientes',
+            'ORGANIZADOR': 'organizadores',
+            'PROVEEDOR': 'proveedores',
+            'INVITADO': 'invitados',
+            'SUPERVISOR': 'supervisores'
+        };
+
+        async function loadUsers() {
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = ''; // Limpiar tabla
+
+            try {
+                const roles = ['admins', 'clientes', 'organizadores', 'proveedores', 'invitados', 'supervisores'];
+                let allUsers = [];
+
+                // Obtener usuarios de todas las colecciones desde MongoDB
+                for (const role of roles) {
+                    const response = await fetch(`/rest/${role}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error al obtener usuarios de ${role}: ${response.statusText}`);
+                    }
+
+                    const users = await response.json();
+                    allUsers = allUsers.concat(users.map(user => ({ ...user, rolePath: role })));
+                }
+
+                // Rellenar la tabla con los usuarios obtenidos
+                allUsers.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.classList.add('admin-list__table-row');
+                    row.innerHTML = `
+                        <td class="admin-list__table-cell">${user.nombre || 'N/A'}</td>
+                        <td class="admin-list__table-cell">${user.correo || 'N/A'}</td>
+                        <td class="admin-list__table-cell">${user.role || 'N/A'}</td>
+                        <td class="admin-list__table-cell">
+                            <button class="admin-list__action-btn admin-list__action-btn--edit" data-correo="${user.correo}" data-role="${user.rolePath}" data-bs-toggle="modal" data-bs-target="#editUserModal">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="admin-list__action-btn admin-list__action-btn--delete" data-correo="${user.correo}" data-role="${user.rolePath}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    usersTableBody.appendChild(row);
+                });
+
+                // Agregar eventos a los botones de edición y eliminación
+                document.querySelectorAll('.admin-list__action-btn--edit').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const correo = btn.dataset.correo;
+                        const rolePath = btn.dataset.role;
+                        loadUserForEdit(correo, rolePath);
+                    });
+                });
+                document.querySelectorAll('.admin-list__action-btn--delete').forEach(btn => {
+                    btn.addEventListener('click', () => deleteUser(btn.dataset.correo, btn.dataset.role));
+                });
+
+            } catch (error) {
+                console.error('Error al cargar usuarios:', error);
+                usersTableBody.innerHTML = '<tr><td colspan="4">Error al cargar usuarios. Intenta de nuevo más tarde.</td></tr>';
+            }
+        }
+
+        // Cargar datos del usuario para editar
+        async function loadUserForEdit(correo, rolePath) {
+            try {
+                const response = await fetch(`/rest/${rolePath}/${correo}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error al obtener usuario: ${response.statusText}`);
+                }
+
+                const user = await response.json();
+                document.getElementById('editCorreo').value = user.correo;
+                document.getElementById('editRolePath').value = rolePath;
+                document.getElementById('editNombre').value = user.nombre || '';
+                document.getElementById('editPassword').value = ''; // No se muestra la contraseña por seguridad
+                document.getElementById('editRoleSelect').value = user.role;
+            } catch (error) {
+                console.error('Error al cargar usuario para edición:', error);
+                alert('Error al cargar los datos del usuario: ' + error.message);
+            }
+        }
+
+        // Enviar edición del usuario
+        document.getElementById('editUserForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const correo = document.getElementById('editCorreo').value;
+            const rolePath = document.getElementById('editRolePath').value;
+            const nombre = document.getElementById('editNombre').value;
+            const password = document.getElementById('editPassword').value;
+            const newRole = document.getElementById('editRoleSelect').value;
+
+            const updatedUser = { nombre, password: password || undefined, role: newRole };
+
+            try {
+                const response = await fetch(`/rest/${rolePath}/${correo}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedUser),
+                });
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.message || 'Error al actualizar el usuario');
+                }
+
+                alert('Usuario actualizado exitosamente.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                modal.hide();
+                loadUsers(); // Recargar la tabla
+            } catch (error) {
+                alert('Error al actualizar el usuario: ' + error.message);
+                console.error('Error:', error);
+            }
+        });
+
+        // Eliminar usuario
+        async function deleteUser(correo, role) {
+            if (confirm(`¿Estás seguro de eliminar al usuario con correo: ${correo}?`)) {
+                try {
+                    const response = await fetch(`/rest/${role}/${correo}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        alert('Usuario eliminado exitosamente.');
+                        loadUsers(); // Recargar la tabla
+                    } else {
+                        const result = await response.json();
+                        alert(result.message || 'Error al eliminar el usuario');
+                    }
+                } catch (error) {
+                    alert('Error de conexión: ' + error.message);
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        // Cargar usuarios al iniciar la página
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>

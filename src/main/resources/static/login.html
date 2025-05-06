@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/login.css">
+<title>Zénit Eventos Login</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
+            <nav class="header__navbar">
+                <a href="/index.html" class="navbar__links">Inicio</a>
+                <a href="/event.html" class="navbar__links">Eventos</a>
+                <a href="/login.html" class="navbar__links navbar__links--activo">Iniciar Sesión</a>
+                <a href="/register.html" class="navbar__links">Registrarse</a>
+            </nav>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
+
+    <main class="contenedor">
+        <div class="login shadow-card">
+            <div class="login__gif">
+                <img src="./gif/login.gif" alt="Login gif">
+            </div> <!--Fin login__gif-->
+
+            <div class="login__form">
+                <form id="loginForm" action="/perform_login" method="POST">
+                    <fieldset>
+                        <legend class="login__title">
+                            Inicia Sesión Para Acceder a Todos los Eventos
+                        </legend>
+
+                        <label for="correo" class="login__label">Correo <i class="fa-solid fa-envelope"></i></label>
+                        <input id="correo" name="username" class="login__input" type="email" placeholder="correo@gmail.com" required>
+
+                        <label for="password" class="login__label">Contraseña <i class="fa-solid fa-lock"></i></label>
+                        <input id="password" name="password" class="login__input" type="password" placeholder="********" required>
+
+                        <label for="role" class="login__label">Rol <i class="fa-solid fa-circle-user"></i></label>
+                        <select id="role" name="role" class="login__input" required>
+                            <option value="" disabled selected>Selecciona un Rol</option>
+							<option value="ADMIN">Administrador</option>
+							<option value="ORGANIZADOR">Organizador</option>
+							<option value="PROVEEDOR">Proveedor</option>
+							<option value="INVITADO">Invitado</option>
+							<option value="CLIENTE">Cliente</option>
+							<option value="SUPERVISOR">Supervisor</option>
+                        </select>
+                    </fieldset>
+
+                    <button class="login__button" type="submit">Iniciar Sesión <i class="fa-solid fa-right-to-bracket"></i></button>
+                </form>
+            </div> <!--Fin login__form-->
+        </div> <!--Fin login-->
+    </main> 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        // Mostrar mensaje de error si la URL contiene ?error=true
+        if (window.location.search.includes('error=true')) {
+            alert('Error al iniciar sesión. Verifica tu correo, contraseña o rol.');
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const correo = document.getElementById('correo').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            if (!correo || !password || !role) {
+                alert('Por favor, completa todos los campos.');
+                return;
+            }
+
+            try {
+                const loginResponse = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ correo, password, role }),
+                });
+
+                const loginResult = await loginResponse.json();
+
+                if (!loginResponse.ok) {
+                    alert(loginResult.message || 'Error al validar credenciales.');
+                    return;
+                }
+
+                const form = document.getElementById('loginForm');
+                form.submit();
+            } catch (error) {
+                alert('Error de conexión. Intenta de nuevo.');
+                console.error('Error:', error);
+            }
+        });
+    </script>
+</body>
+</html>
