@@ -5,42 +5,83 @@
 fieldset {
     border: none;
 }
+
+/* Asegura que el body sea un contenedor flexible y ocupe toda la altura del viewport */
+html, body {
+    height: 100%; /* Asegura que el body ocupe toda la altura */
+    margin: 0; /* Elimina márgenes por defecto */
+    padding: 0; /* Elimina padding por defecto */
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Organiza los elementos en columna */
+    min-height: 100vh; /* Asegura que el body ocupe al menos el alto del viewport */
+}
+
+/* El main crece para llenar el espacio disponible */
+main {
+    flex: 1 0 auto; /* Hace que el main crezca para llenar el espacio, pero no se encoja */
+}
+
 .login {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-bottom: 1rem;
+    margin-top: 100px; /* Espacio adicional entre el navbar fijo y el formulario */
+    background-color: var(--button); /* #A1A6B4, igual que el navbar */
+    padding: 2rem;
+    border-radius: 1rem;
+    color: #000000; /* Texto negro para contraste */
 }
+
 .login__gif {
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 1rem;
 }
+
 .login__title {
     font-weight: bold;
     font-size: 2rem;
-    color: var(--negro);
+    color: #000000; /* Título negro */
     text-align: center;
+    margin-bottom: 1rem;
 }
+
 .login__label {
     display: block;
     font-weight: bold;
+    color: #000000; /* Etiquetas negras */
+    margin-bottom: 0.5rem;
 }
+
 .login__input {
     padding: 1rem;
     width: 90%;
     margin-bottom: 1rem;
-    border-radius: .5rem;
+    border-radius: 0.5rem;
+    background-color: #ffffff; /* Fondo blanco para inputs */
+    border: 1px solid #000000; /* Borde negro para contraste */
+    color: #000000; /* Texto negro en inputs */
 }
+
 .login__button {
-    background-color: var(--button);
+    background-color: var(--button); /* #A1A6B4, gris azulado claro */
     margin: 1rem;
     padding: 1rem;
     border-radius: 1rem;
     font-weight: bold;
+    color: #000000; /* Texto negro para contraste con el botón */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 .login__button:hover {
-    background-color: var(--navbar);
-    color: var(--fondo);
+    background-color: var(--navbar); /* #36413E, gris verdoso oscuro */
+    color: #ffffff; /* Texto blanco al hacer hover */
 }
 
