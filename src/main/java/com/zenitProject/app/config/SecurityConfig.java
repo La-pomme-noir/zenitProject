@@ -20,8 +20,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/css/**", "/img/**", "/js/**", "/gif/**").permitAll()
-                .requestMatchers("/api/clientes/login", "/rest/clientes/**", "/api/users/login").permitAll()
+                .requestMatchers("/", "/index.html", "/evento.html", "/login.html", "/register.html", "/css/**", "/img/**", "/js/**", "/gif/**").permitAll()
+                .requestMatchers("/api/clientes/login", "/rest/clientes/**", "/api/users/login", "/rest/organizadores/public/eventos").permitAll()
                 .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**").hasRole("ADMIN")
                 .requestMatchers("/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").authenticated()
                 .anyRequest().authenticated()

@@ -5,6 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import java.util.stream.Collectors;
 
 import com.zenitProject.app.entidades.Evento;
 import com.zenitProject.app.entidades.Invitado;
@@ -264,6 +268,42 @@ public class OrganizadorRestController {
                     return ResponseEntity.ok().body(Map.of("message", "Evento eliminado exitosamente."));
                 })
                 .orElse(ResponseEntity.status(404).body(Map.of("message", "Evento no encontrado.")));
+    }
+    
+    // Recuperar un evento (Sección de eventos)
+    @GetMapping("/public/eventos")
+    public ResponseEntity<Map<String, Object>> getAllEventos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Evento> eventosPage = eventoRepository.findByEstadoAprobacion("Pendiente", pageable);
+
+        // Mapear eventos a un formato que excluya campos sensibles
+        List<Map<String, Object>> eventosFiltrados = eventosPage.getContent().stream()
+                .map(evento -> {
+                    Map<String, Object> eventoMap = new HashMap<>();
+                    eventoMap.put("id", evento.getId());
+                    eventoMap.put("nombreEvento", evento.getNombreEvento());
+                    eventoMap.put("lugar", evento.getLugar());
+                    eventoMap.put("ciudad", evento.getCiudad());
+                    eventoMap.put("aforo", evento.getCantidadSillas());
+                    eventoMap.put("organizadorNombre", evento.getOrganizadorNombre());
+                    eventoMap.put("fecha", evento.getFecha());
+                    eventoMap.put("hora", evento.getHora());
+                    eventoMap.put("descripcion", evento.getDescripcion());
+                    eventoMap.put("requisitos", evento.getRequisitos());
+                    return eventoMap;
+                })
+                .collect(Collectors.toList());
+
+        // Construir la respuesta
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventos", eventosFiltrados);
+        response.put("currentPage", eventosPage.getNumber());
+        response.put("totalItems", eventosPage.getTotalElements());
+        response.put("totalPages", eventosPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     // Actualizar un organizador

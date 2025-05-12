@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Enter your description here"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/eventos.css">
+    <title>Zénit Eventos Calendario</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <nav class="header__navbar">
+                <a href="/index.html" class="navbar__links">Inicio</a>
+                <a href="/evento.html" class="navbar__links navbar__links--activo">Eventos</a>
+                <a href="/login.html" class="navbar__links">Iniciar Sesión</a>
+                <a href="/register.html" class="navbar__links">Registrarse</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <section class="eventos">
+            <h2 class="title__sections">Calendario</h2>
+            <div class="eventos__cards shadow-card" id="eventos-container">
+                <!-- Eventos serán cargados dinámicamente -->
+            </div>
+            <div class="pagination" id="pagination-container">
+                <button id="prev-page" class="btn btn-secondary" disabled>Anterior</button>
+                <span id="page-info"></span>
+                <button id="next-page" class="btn btn-secondary">Siguiente</button>
+            </div>
+        </section>
+    </main>
+		
+	<footer class="footer">
+		    <div class="footer__logo">
+		        <a href="./index.html">
+		            <img src="./img/logo1.png" alt="LogoZénit">
+		        </a>
+		        <div class="footer__social">
+		            <a href="#"><i class="fab fa-twitter"></i></a>
+		            <a href="#"><i class="fab fa-facebook-f"></i></a>
+		            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+		        </div>
+		    </div>
+		    <nav class="footer__navbar">
+		        <a href="/index.html" class="footer__links footer__links--activo">Nosotros</a>
+		        <a href="#" class="footer__links">Contacto</a>
+		        <a href="#" class="footer__links">Terminos y condiciones</a>
+		        <a href="#" class="footer__links">Politica cookies</a>
+		    </nav>
+		</footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script src="./js/eventosCards.js"></script>
+	<script src="./js/dateEventos.js"></script>
+</body>
+</html>
