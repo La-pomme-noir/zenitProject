@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Lista de eventos creados por Zénit Eventos"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="./css/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <title>Zénit Eventos - Lista de Eventos</title>
+    <style>
+		.event-card {
+		            border: 1px solid #ddd;
+		            border-radius: 8px;
+		            padding: 15px;
+		            margin-bottom: 20px;
+		            background-color: #ffffff; /* Fondo blanco para contraste */
+		            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		            color: #333; /* Texto oscuro para legibilidad */
+		        }
+        .event-card h5 { margin-bottom: 10px; }
+        .event-card p { margin: 5px 0; }
+        .event-card .actions { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/organizador.html" class="navbar__links navbar__links--activo">Organizador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="admin-list">
+            <h2 class="admin-list__title">Lista de Eventos Creados</h2>
+            <div id="eventsContainer" class="row">
+                <!-- Tarjetas se cargarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para editar evento -->
+    <div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEventForm">
+                        <input type="hidden" id="editEventId" name="id">
+                        <div class="mb-3">
+                            <label for="editNombreEvento" class="form-label">Nombre del Evento</label>
+                            <input type="text" class="form-control" id="editNombreEvento" name="nombreEvento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editFecha" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="editFecha" name="fecha" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editLugar" class="form-label">Lugar</label>
+                            <input type="text" class="form-control" id="editLugar" name="lugar" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editHora" class="form-label">Hora</label>
+                            <input type="time" class="form-control" id="editHora" name="hora" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCiudad" class="form-label">Ciudad</label>
+                            <input type="text" class="form-control" id="editCiudad" name="ciudad" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editCantidadSillas" class="form-label">Cantidad de Sillas</label>
+                            <input type="number" class="form-control" id="editCantidadSillas" name="cantidadSillas" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDescripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="editDescripcion" name="descripcion" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editRequisitos" class="form-label">Requisitos</label>
+                            <textarea class="form-control" id="editRequisitos" name="requisitos" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editInvitados" class="form-label">Invitados (IDs separados por comas)</label>
+                            <input type="text" class="form-control" id="editInvitados" name="invitados" placeholder="Ej: id1,id2,id3">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProveedores" class="form-label">Proveedores (formato: categoría1:id1,categoría2:id2)</label>
+                            <input type="text" class="form-control" id="editProveedores" name="proveedores" placeholder="Ej: catering:id1,sonido:id2">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+	<script>
+	        let invitadosMap = {};
+	        let proveedoresMap = {};
+
+	        // Cargar lista de invitados y proveedores al inicio
+	        async function loadResources() {
+	            try {
+	                // Cargar invitados
+	                const invitadosResponse = await fetch('/rest/invitados', {
+	                    method: 'GET',
+	                    headers: {
+	                        'Content-Type': 'application/json',
+	                    },
+	                    credentials: 'include',
+	                });
+	                if (!invitadosResponse.ok) {
+	                    throw new Error('Error al cargar invitados');
+	                }
+	                const invitados = await invitadosResponse.json();
+	                invitados.forEach(invitado => {
+	                    invitadosMap[invitado.id] = invitado.nombre;
+	                });
+
+	                // Cargar proveedores
+	                const proveedoresResponse = await fetch('/rest/proveedores', {
+	                    method: 'GET',
+	                    headers: {
+	                        'Content-Type': 'application/json',
+	                    },
+	                    credentials: 'include',
+	                });
+	                if (!proveedoresResponse.ok) {
+	                    throw new Error('Error al cargar proveedores');
+	                }
+	                const proveedores = await proveedoresResponse.json();
+	                proveedores.forEach(proveedor => {
+	                    proveedoresMap[proveedor.id] = proveedor.nombre;
+	                });
+	            } catch (error) {
+	                console.error('Error al cargar recursos:', error);
+	            }
+	        }
+
+	        async function loadEvents() {
+	            const eventsContainer = document.getElementById('eventsContainer');
+	            eventsContainer.innerHTML = ''; // Limpiar contenedor
+
+	            try {
+	                const response = await fetch('/rest/organizadores/eventos', {
+	                    method: 'GET',
+	                    headers: {
+	                        'Content-Type': 'application/json',
+	                    },
+	                    credentials: 'include',
+	                });
+
+	                if (!response.ok) {
+	                    if (response.status === 401) {
+	                        throw new Error('No estás autenticado. Por favor, inicia sesión.');
+	                    }
+	                    if (response.status === 404) {
+	                        throw new Error('No se encontraron eventos para este organizador.');
+	                    }
+	                    throw new Error(`Error al obtener eventos: ${response.status} - ${response.statusText}`);
+	                }
+
+	                const events = await response.json();
+	                if (!Array.isArray(events)) {
+	                    throw new Error('La respuesta no es una lista de eventos');
+	                }
+
+	                if (events.length === 0) {
+	                    eventsContainer.innerHTML = '<p class="text-center">No hay eventos creados todavía.</p>';
+	                    return;
+	                }
+
+	                events.forEach(event => {
+	                    const invitadosNombres = event.invitados
+	                        ? event.invitados.map(id => invitadosMap[id] || id).join(', ')
+	                        : 'N/A';
+	                    const proveedoresNombres = event.proveedores
+	                        ? Object.entries(event.proveedores).map(([key, id]) => `${key}: ${proveedoresMap[id] || id}`).join(', ')
+	                        : 'N/A';
+	                    const card = document.createElement('div');
+	                    card.classList.add('col-md-4', 'event-card');
+	                    card.innerHTML = `
+	                        <h5>${event.nombreEvento || 'N/A'}</h5>
+	                        <p><strong>Fecha:</strong> ${event.fecha || 'N/A'}</p>
+	                        <p><strong>Lugar:</strong> ${event.lugar || 'N/A'}</p>
+	                        <p><strong>Organizador:</strong> ${event.organizadorNombre || 'N/A'}</p>
+	                        <p><strong>Invitados:</strong> ${invitadosNombres}</p>
+	                        <p><strong>Proveedores:</strong> ${proveedoresNombres}</p>
+	                        <p><strong>Estado:</strong> ${event.estadoAprobacion || 'N/A'}</p>
+	                        <div class="actions">
+	                            <button class="admin-list__action-btn admin-list__action-btn--edit" data-id="${event.id}" data-bs-toggle="modal" data-bs-target="#editEventModal">
+	                                <i class="fas fa-edit"></i> Editar
+	                            </button>
+	                            <button class="admin-list__action-btn admin-list__action-btn--delete" data-id="${event.id}">
+	                                <i class="fas fa-trash-alt"></i> Eliminar
+	                            </button>
+	                        </div>
+	                    `;
+	                    eventsContainer.appendChild(card);
+	                });
+
+	                document.querySelectorAll('.admin-list__action-btn--edit').forEach(btn => {
+	                    btn.addEventListener('click', () => {
+	                        const id = btn.dataset.id;
+	                        loadEventForEdit(id);
+	                    });
+	                });
+	                document.querySelectorAll('.admin-list__action-btn--delete').forEach(btn => {
+	                    btn.addEventListener('click', () => deleteEvent(btn.dataset.id));
+	                });
+
+	            } catch (error) {
+	                console.error('Error al cargar eventos:', error);
+	                eventsContainer.innerHTML = '<p class="text-center">Error al cargar eventos. Intenta de nuevo más tarde. Detalle: ' + error.message + '</p>';
+	            }
+	        }
+
+	        async function loadEventForEdit(id) {
+	            try {
+	                const response = await fetch(`/rest/organizadores/eventos/${id}`, {
+	                    method: 'GET',
+	                    headers: {
+	                        'Content-Type': 'application/json',
+	                    },
+	                    credentials: 'include',
+	                });
+
+	                if (!response.ok) {
+	                    throw new Error(`Error al obtener evento: ${response.statusText}`);
+	                }
+
+	                const event = await response.json();
+	                document.getElementById('editEventId').value = event.id;
+	                document.getElementById('editNombreEvento').value = event.nombreEvento || '';
+	                document.getElementById('editFecha').value = event.fecha || '';
+	                document.getElementById('editLugar').value = event.lugar || '';
+	                document.getElementById('editHora').value = event.hora || '';
+	                document.getElementById('editCiudad').value = event.ciudad || '';
+	                document.getElementById('editCantidadSillas').value = event.cantidadSillas || '';
+	                document.getElementById('editDescripcion').value = event.descripcion || '';
+	                document.getElementById('editRequisitos').value = event.requisitos || '';
+	                document.getElementById('editInvitados').value = event.invitados ? event.invitados.join(', ') : '';
+	                document.getElementById('editProveedores').value = event.proveedores ? Object.entries(event.proveedores).map(([k, v]) => `${k}:${v}`).join(', ') : '';
+
+	                // Mostrar nombres actuales en el modal
+	                const invitadosNombres = event.invitados
+	                    ? event.invitados.map(id => invitadosMap[id] || id).join(', ')
+	                    : 'Ninguno';
+	                const proveedoresNombres = event.proveedores
+	                    ? Object.entries(event.proveedores).map(([key, id]) => `${key}: ${proveedoresMap[id] || id}`).join(', ')
+	                    : 'Ninguno';
+	                document.getElementById('invitadosNames').textContent = invitadosNombres;
+	                document.getElementById('proveedoresNames').textContent = proveedoresNombres;
+	            } catch (error) {
+	                console.error('Error al cargar evento para edición:', error);
+	                alert('Error al cargar los datos del evento: ' + error.message);
+	            }
+	        }
+
+	        document.getElementById('editEventForm').addEventListener('submit', async (event) => {
+	            event.preventDefault();
+
+	            const id = document.getElementById('editEventId').value;
+	            const nombreEvento = document.getElementById('editNombreEvento').value;
+	            const fecha = document.getElementById('editFecha').value;
+	            const lugar = document.getElementById('editLugar').value;
+	            const hora = document.getElementById('editHora').value;
+	            const ciudad = document.getElementById('editCiudad').value;
+	            const cantidadSillas = document.getElementById('editCantidadSillas').value;
+	            const descripcion = document.getElementById('editDescripcion').value;
+	            const requisitos = document.getElementById('editRequisitos').value;
+	            const invitadosStr = document.getElementById('editInvitados').value;
+	            const proveedoresStr = document.getElementById('editProveedores').value;
+
+	            const invitados = invitadosStr.split(',').map(id => id.trim()).filter(id => id);
+	            const proveedores = proveedoresStr.split(',').reduce((acc, pair) => {
+	                const [key, value] = pair.split(':').map(s => s.trim());
+	                if (key && value) acc[key] = value;
+	                return acc;
+	            }, {});
+
+	            const updatedEvent = {
+	                nombreEvento,
+	                fecha,
+	                lugar,
+	                hora,
+	                ciudad,
+	                cantidadSillas: parseInt(cantidadSillas),
+	                descripcion,
+	                requisitos,
+	                invitados,
+	                proveedores
+	            };
+
+	            try {
+	                const response = await fetch(`/rest/organizadores/eventos/${id}`, {
+	                    method: 'PUT',
+	                    headers: {
+	                        'Content-Type': 'application/json',
+	                    },
+	                    body: JSON.stringify(updatedEvent),
+	                    credentials: 'include',
+	                });
+
+	                if (!response.ok) {
+	                    const result = await response.json();
+	                    throw new Error(result.message || 'Error al actualizar el evento');
+	                }
+
+	                alert('Evento actualizado exitosamente.');
+	                const modal = bootstrap.Modal.getInstance(document.getElementById('editEventModal'));
+	                modal.hide();
+	                loadEvents();
+	            } catch (error) {
+	                alert('Error al actualizar el evento: ' + error.message);
+	                console.error('Error:', error);
+	            }
+	        });
+
+	        async function deleteEvent(id) {
+	            if (confirm(`¿Estás seguro de eliminar el evento con ID: ${id}?`)) {
+	                try {
+	                    const response = await fetch(`/rest/organizadores/eventos/${id}`, {
+	                        method: 'DELETE',
+	                        headers: {
+	                            'Content-Type': 'application/json',
+	                        },
+	                        credentials: 'include',
+	                    });
+
+	                    if (response.ok) {
+	                        alert('Evento eliminado exitosamente.');
+	                        loadEvents();
+	                    } else {
+	                        const result = await response.json();
+	                        alert(result.message || 'Error al eliminar el evento');
+	                    }
+	                } catch (error) {
+	                    alert('Error de conexión: ' + error.message);
+	                    console.error('Error:', error);
+	                }
+	            }
+	        }
+
+	        // Cargar recursos y eventos al iniciar
+	        window.onload = async () => {
+	            await loadResources();
+	            loadEvents();
+	        };
+	    </script>
+</body>
+</html>

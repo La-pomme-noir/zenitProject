@@ -11,28 +11,69 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/admin.css">
+<link rel="stylesheet" href="./css/invitado.css">
 <title>Zénit Eventos Organizador</title>
 </head>
 <body>
-    <header class="header">
-        <div class="header__logo">
-            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
-            <nav class="header__navbar">
-                <a href="/index.html" class="navbar__links">Inicio</a>
-                <a href="/event.html" class="navbar__links">Eventos</a>
-                <a href="/cliente.html" class="navbar__links navbar__links--activo">Organizador</a>
-                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
-            </nav>
-        </div> <!--Fin header__logo-->
-    </header> <!--Fin Header-->
+	<header class="header">
+		        <div class="header__logo">
+		            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+					<span class="header__title">Zenit Eventos</span>
+		            <nav class="header__navbar">
+		                <a href="/organizador.html" class="navbar__links navbar__links--activo">Organizador</a>
+		                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+		            </nav>
+		        </div> <!--Fin header__logo-->
+		    </header> <!--Fin Header-->
 
-    <main class="contenedor">
+	<main class="contenedor">
+	    <div class="admin">
+	        <h2 class="title__sections">Panel Organizador</h2>
+	        <div class="admin-content shadow-card">
+	            <div class="admin-content__cards">
+	                <img src="https://img.freepik.com/vector-gratis/ilustracion-embajador-marca-dibujada-mano_23-2149378385.jpg?uid=R14880236&ga=GA1.1.742260549.1736050892&semt=ais_hybrid&w=740" alt="Perfil">
+	                <h3 class="admin-content__title">Perfil Organizador</h3>
+	                <p class="admin-content__parrafo">En este apartado, podrás ver y gestionar los datos de tu perfil como organizador.</p>
+	                <a class="custom__button--a" href="./organizadorPerfil.html">Mirar</a>
+	            </div> <!--Fin admin-content__cards-->
 
-    </main> 
+	            <div class="admin-content__cards">
+	                <img src="https://img.freepik.com/vector-gratis/evento-calendario-festivo-fiesta-celebracion-navidena-planificacion-horario-trabajo-gestion-proyectos-idea-fecha-limite-gerentes-oficina-colegas-entusiasmados_335657-1610.jpg?uid=R14880236&ga=GA1.1.742260549.1736050892&semt=ais_hybrid&w=740" alt="Crear y Gestionar Eventos">
+	                <h3 class="admin-content__title">Nuevos Eventos</h3>
+	                <p class="admin-content__parrafo">Crea eventos, reserva espacios, contrata proveedores y coordina con invitados (enviar invitaciones).</p>
+	                <a class="custom__button--a" href="./createEvent.html">Gestionar</a>
+	            </div> <!--Fin admin-content__cards-->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
-</body>
-</html>
+	            <div class="admin-content__cards">
+	                <img src="https://img.freepik.com/vector-gratis/concierto-al-aire-libre_52683-48045.jpg?uid=R14880236&ga=GA1.1.742260549.1736050892&semt=ais_hybrid&w=740" alt="Ver Eventos Creados">
+	                <h3 class="admin-content__title">Ver Eventos Creados</h3>
+	                <p class="admin-content__parrafo">Consulta la lista de eventos que ya has creado como organizador.</p>
+	                <a class="custom__button--a" href="./eventoList.html">Ver Lista</a>
+	            </div> <!--Fin admin-content__cards-->
+	        </div> <!--Fin admin-content-->
+	    </div> <!--Fin admin-->
+	</main>
+	<footer class="footer">
+	    <div class="footer__logo">
+	        <a href="./index.html">
+	            <img src="./img/logo1.png" alt="LogoZénit">
+	        </a>
+	        <div class="footer__social">
+	            <a href="#"><i class="fab fa-twitter"></i></a>
+	            <a href="#"><i class="fab fa-facebook-f"></i></a>
+	            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+	        </div>
+	    </div>
+	    <nav class="footer__navbar">
+	        <a href="/index.html" class="footer__links footer__links--activo">Nosotros</a>
+	        <a href="#" class="footer__links">Contacto</a>
+	        <a href="#" class="footer__links">Terminos y condiciones</a>
+	        <a href="#" class="footer__links">Politica cookies</a>
+	    </nav>
+	</footer>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+	<script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+	</body>
+	</html>

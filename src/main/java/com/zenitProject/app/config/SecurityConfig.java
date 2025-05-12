@@ -8,21 +8,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // Desactivar CSRF para pruebas
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // Permitir acceso público a recursos estáticos y páginas de login/registro
                 .requestMatchers("/", "/index.html", "/login.html", "/register.html", "/css/**", "/img/**", "/js/**", "/gif/**").permitAll()
-                // Permitir acceso público al endpoint de registro
-                .requestMatchers("/api/clientes/login","/rest/clientes/**", "/api/users/login").permitAll()
-                // Restringir acceso a endpoints de admin solo a rol ADMIN
-                .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**", "/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").hasRole("ADMIN")
+                .requestMatchers("/api/clientes/login", "/rest/clientes/**", "/api/users/login").permitAll()
+                .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**").hasRole("ADMIN")
+                .requestMatchers("/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -44,19 +45,19 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
             String role = authentication.getAuthorities().iterator().next().getAuthority().replace("ROLE_", "");
-            request.getSession().setAttribute("userRole", role); // Guardar rol en sesión
+            request.getSession().setAttribute("userRole", role);
             if (role.equals("ADMIN")) {
                 response.sendRedirect("/admin.html");
-            }else if (role.equals("ORGANIZADOR")) {
-            	response.sendRedirect("/organizador.html");
-            }else if (role.equals("PROVEEDOR")) {
-            	response.sendRedirect("/proveedor.html");
-            }else if (role.equals("INVITADO")) {
-            	response.sendRedirect("/invitado.html");
-            }else if (role.equals("CLIENTE")) {
-            	response.sendRedirect("/cliente.html");
-            }else if (role.equals("SUPERVISOR")) {
-            	response.sendRedirect("/supervisor.html");
+            } else if (role.equals("ORGANIZADOR")) {
+                response.sendRedirect("/organizador.html");
+            } else if (role.equals("PROVEEDOR")) {
+                response.sendRedirect("/proveedor.html");
+            } else if (role.equals("INVITADO")) {
+                response.sendRedirect("/invitado.html");
+            } else if (role.equals("CLIENTE")) {
+                response.sendRedirect("/cliente.html");
+            } else if (role.equals("SUPERVISOR")) {
+                response.sendRedirect("/supervisor.html");
             }
         };
     }
@@ -64,5 +65,18 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:8092")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowCredentials(true);
+            }
+        };
     }
 }

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="Description" content="Enter your description here"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/admin.css">
+<title>Zénit Eventos - Crear Evento</title>
+<style>
+    .invitados-container {
+        margin-bottom: 15px;
+    }
+    .invitado-field {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .invitado-field select {
+        flex-grow: 1;
+        margin-right: 10px;
+    }
+</style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/organizador.html" class="navbar__links navbar__links--activo">Organizador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="admin">
+            <h2 class="title__sections">Crear Evento</h2>
+            <div class="admin-create shadow-card">
+                <form id="createEventForm">
+                    <fieldset>
+                        <legend class="admin-create__title">Crear un Nuevo Evento</legend>
+
+                        <label for="organizadorId" class="admin-create__label">ID del Organizador <i class="fa-solid fa-user"></i></label>
+                        <input type="text" id="organizadorId" class="admin-create__input" readonly>
+
+                        <label for="organizadorNombre" class="admin-create__label">Nombre del Organizador <i class="fa-solid fa-user"></i></label>
+                        <input type="text" id="organizadorNombre" class="admin-create__input" readonly>
+
+                        <label for="nombreEvento" class="admin-create__label">Nombre del Evento <i class="fa-solid fa-calendar-days"></i></label>
+                        <input type="text" id="nombreEvento" class="admin-create__input" placeholder="Nombre del evento" required>
+
+                        <label for="fecha" class="admin-create__label">Fecha <i class="fa-solid fa-calendar"></i></label>
+                        <input type="date" id="fecha" class="admin-create__input" required>
+
+                        <label class="admin-create__label">Invitados <i class="fa-solid fa-user-friends"></i></label>
+                        <div class="invitados-container" id="invitadosContainer">
+							<div class="invitado-fields">
+							    <div class="invitado-field">
+							        <select class="admin-create__input invitado-select" required>
+							            <option value="" disabled selected>Selecciona un invitado</option>
+							        </select>
+							        <button type="button" class="btn btn-danger btn-sm remove-invitado" style="display: none;">X</button>
+							    </div>
+							</div>
+							<button type="button" class="add-invitado">Agregar otro invitado</button>
+                        </div>
+						
+                        <label for="cantidadSillas" class="admin-create__label">Cantidad de Sillas <i class="fa-solid fa-chair"></i></label>
+                        <input type="number" id="cantidadSillas" class="admin-create__input" placeholder="Número de sillas" required>
+
+                        <label class="admin-create__label">Proveedores <i class="fa-solid fa-truck"></i></label>
+						<div id="proveedoresContainer">
+						    <div>
+						        <label for="proveedorSonidoeIluminación" class="admin-create__label">Sonido e Iluminación</label>
+						        <select id="proveedorSonidoeIluminación" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorDecoración" class="admin-create__label">Decoración</label>
+						        <select id="proveedorDecoración" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorLogística" class="admin-create__label">Logística</label>
+						        <select id="proveedorLogística" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorServicioPersonal" class="admin-create__label">Servicio Personal</label>
+						        <select id="proveedorServicioPersonal" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorTaquillería" class="admin-create__label">Taquillería</label>
+						        <select id="proveedorTaquillería" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorAlimentación" class="admin-create__label">Alimentación</label>
+						        <select id="proveedorAlimentación" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						    <div>
+						        <label for="proveedorMarketing" class="admin-create__label">Marketing</label>
+						        <select id="proveedorMarketing" class="admin-create__input" >
+						            <option value="" disabled selected>Selecciona un proveedor</option>
+						        </select>
+						    </div>
+						</div>
+
+                        <label for="lugar" class="admin-create__label">Lugar <i class="fa-solid fa-map-marker-alt"></i></label>
+                        <input type="text" id="lugar" class="admin-create__input" placeholder="Lugar del evento" required>
+
+                        <label for="hora" class="admin-create__label">Hora <i class="fa-solid fa-clock"></i></label>
+                        <input type="time" id="hora" class="admin-create__input" required>
+
+                        <label for="ciudad" class="admin-create__label">Ciudad <i class="fa-solid fa-city"></i></label>
+                        <input type="text" id="ciudad" class="admin-create__input" placeholder="Ciudad del evento" required>
+
+                        <label for="descripcion" class="admin-create__label">Descripción <i class="fa-solid fa-file-alt"></i></label>
+                        <textarea id="descripcion" class="admin-create__input" placeholder="Descripción del evento" required></textarea>
+
+                        <label for="requisitos" class="admin-create__label">Requisitos <i class="fa-solid fa-exclamation-circle"></i></label>
+                        <textarea id="requisitos" class="admin-create__input" placeholder="Ejemplo: Ser mayor de edad" required></textarea>
+
+                        <button class="custom__button" type="submit">Crear Evento <i class="fa-solid fa-plus"></i></button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+	<script>
+	    let invitadoTemplate = null;
+
+	    async function loadOrganizadorInfo() {
+	        try {
+	            console.log('Iniciando carga de información del organizador...');
+	            const response = await fetch('/api/organizadores/profile', {
+	                method: 'GET',
+	                credentials: 'include',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	            });
+
+	            if (!response.ok) {
+	                const errorText = await response.text();
+	                console.error('Error al obtener el perfil:', {
+	                    status: response.status,
+	                    statusText: response.statusText,
+	                    errorText: errorText
+	                });
+	                throw new Error(`Error al obtener el perfil: ${response.status} - ${errorText}`);
+	            }
+
+	            const profile = await response.json();
+	            console.log('Perfil cargado:', profile);
+	            document.getElementById('organizadorId').value = profile.id || 'N/A';
+	            document.getElementById('organizadorNombre').value = profile.nombre || 'N/A';
+	        } catch (error) {
+	            console.error('Error al cargar la información del organizador:', error.message);
+	            alert('No se pudo cargar la información del organizador. Detalles: ' + error.message);
+	        }
+	    }
+
+	    async function loadInvitados() {
+	        try {
+	            console.log('Iniciando carga de invitados...');
+	            const response = await fetch('/rest/invitados', {
+	                method: 'GET',
+	                credentials: 'include',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	            });
+
+	            if (!response.ok) {
+	                const errorText = await response.text();
+	                throw new Error(`Error al obtener los invitados: ${response.status} - ${errorText}`);
+	            }
+
+	            const invitados = await response.json();
+	            console.log('Invitados cargados:', invitados);
+
+	            const selects = document.querySelectorAll('.invitado-select');
+	            if (selects.length === 0) {
+	                console.error('No se encontraron elementos .invitado-select');
+	                return;
+	            }
+
+	            invitadoTemplate = selects[0].cloneNode(true);
+
+	            selects.forEach(select => {
+	                select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
+	                if (invitados && Array.isArray(invitados)) {
+	                    invitados.forEach(invitado => {
+	                        const option = document.createElement('option');
+	                        option.value = invitado.id || invitado._id || '';
+	                        option.textContent = invitado.nombre || 'Sin nombre';
+	                        select.appendChild(option);
+	                    });
+	                } else {
+	                    console.warn('No se encontraron invitados o la respuesta no es un array');
+	                }
+	            });
+	        } catch (error) {
+	            console.error('Error al cargar invitados:', error.message);
+	            alert('Error al cargar invitados: ' + error.message);
+	        }
+	    }
+
+	    function addInvitadoField() {
+	        const container = document.querySelector('.invitado-fields');
+	        if (!container) {
+	            console.error('No se encontró el contenedor .invitado-fields');
+	            return;
+	        }
+
+	        const newSelect = invitadoTemplate.cloneNode(true);
+	        newSelect.classList.add('invitado-select');
+
+	        const removeButton = document.createElement('button');
+	        removeButton.type = 'button';
+	        removeButton.className = 'btn btn-danger btn-sm remove-invitado';
+	        removeButton.textContent = 'X';
+	        removeButton.style.display = 'inline';
+	        removeButton.addEventListener('click', function() {
+	            this.parentElement.remove();
+	        });
+
+	        const newField = document.createElement('div');
+	        newField.className = 'invitado-field';
+	        newField.appendChild(newSelect);
+	        newField.appendChild(removeButton);
+
+	        container.appendChild(newField);
+	        loadInvitados(); // Actualizar todos los selects
+	    }
+
+		async function loadProveedores() {
+		    const categorias = [
+		        'Sonido e Iluminación', 'Decoración', 'Logística', 'Servicio Personal',
+		        'Taquillería', 'Alimentación', 'Marketing'
+		    ];
+
+		    for (const categoria of categorias) {
+		        try {
+		            console.log(`Iniciando carga de proveedores para ${categoria}...`);
+		            const response = await fetch(`/rest/proveedores/categoria/${encodeURIComponent(categoria)}`, {
+		                method: 'GET',
+		                credentials: 'include',
+		                headers: {
+		                    'Content-Type': 'application/json',
+		                },
+		            });
+
+		            if (!response.ok) {
+		                const errorText = await response.text();
+		                console.error(`Error al obtener proveedores de ${categoria}:`, {
+		                    status: response.status,
+		                    statusText: response.statusText,
+		                    errorText: errorText
+		                });
+		                throw new Error(`Error al obtener proveedores de ${categoria}: ${response.status} - ${errorText}`);
+		            }
+
+		            const proveedores = await response.json();
+		            console.log(`Proveedores de ${categoria} cargados:`, proveedores);
+
+		            const selectId = `proveedor${categoria.replace(/\s/g, '')}`;
+		            console.log(`Buscando select con ID: ${selectId}`); // Depuración
+		            const select = document.getElementById(selectId);
+		            if (!select) {
+		                console.error(`No se encontró el elemento para ${categoria} (ID: ${selectId})`);
+		                continue;
+		            }
+
+		            select.innerHTML = '<option value="" disabled selected>Selecciona un proveedor</option>';
+
+		            if (proveedores && Array.isArray(proveedores)) {
+		                console.log(`Procesando ${proveedores.length} proveedores para ${categoria}...`);
+		                proveedores.forEach(proveedor => {
+		                    console.log(`Añadiendo proveedor:`, proveedor); // Depuración
+		                    const option = document.createElement('option');
+		                    option.value = proveedor.id || proveedor._id || ''; // Soporte para id o _id
+		                    option.textContent = proveedor.nombre || 'Sin nombre';
+		                    select.appendChild(option);
+		                });
+		            } else {
+		                console.warn(`No se encontraron proveedores para ${categoria}`);
+		            }
+		        } catch (error) {
+		            console.error(`Error al cargar proveedores de ${categoria}:`, error.message);
+		            alert(`Error al cargar proveedores de ${categoria}: ${error.message}`);
+		        }
+		    }
+		}
+
+	    document.getElementById('createEventForm').addEventListener('submit', async (event) => {
+	        event.preventDefault();
+
+	        const nombreEvento = document.getElementById('nombreEvento').value;
+	        const fecha = document.getElementById('fecha').value;
+	        const invitados = Array.from(document.querySelectorAll('.invitado-select')).map(select => select.value);
+	        const cantidadSillas = parseInt(document.getElementById('cantidadSillas').value);
+	        const proveedores = {
+	            "Sonido e Iluminación": document.getElementById('proveedorSonidoeIluminación').value,
+	            "Decoración": document.getElementById('proveedorDecoración').value,
+	            "Logística": document.getElementById('proveedorLogística').value,
+	            "Servicio Personal": document.getElementById('proveedorServicioPersonal').value,
+	            "Taquillería": document.getElementById('proveedorTaquillería').value,
+	            "Alimentación": document.getElementById('proveedorAlimentación').value,
+	            "Marketing": document.getElementById('proveedorMarketing').value
+	        };
+	        const lugar = document.getElementById('lugar').value;
+	        const hora = document.getElementById('hora').value;
+	        const ciudad = document.getElementById('ciudad').value;
+	        const descripcion = document.getElementById('descripcion').value;
+	        const requisitos = document.getElementById('requisitos').value;
+
+	        if (!nombreEvento || !fecha || !invitados.length || !cantidadSillas || !lugar || !hora || !ciudad || !descripcion || !requisitos) {
+	            alert('Por favor, completa todos los campos.');
+	            return;
+	        }
+
+	        try {
+	            const response = await fetch('/rest/organizadores/eventos', {
+	                method: 'POST',
+	                credentials: 'include',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	                body: JSON.stringify({
+	                    nombreEvento,
+	                    fecha,
+	                    invitados,
+	                    cantidadSillas,
+	                    proveedores,
+	                    lugar,
+	                    hora,
+	                    ciudad,
+	                    descripcion,
+	                    requisitos
+	                }),
+	            });
+
+	            const result = await response.json();
+
+	            if (response.ok) {
+	                alert(result.message || 'Evento creado exitosamente.');
+	                document.getElementById('createEventForm').reset();
+	                const container = document.getElementById('invitadosContainer');
+	                container.innerHTML = `
+	                    <div class="invitado-fields">
+	                        <div class="invitado-field">
+	                            <select class="admin-create__input invitado-select" required>
+	                                <option value="" disabled selected>Selecciona un invitado</option>
+	                            </select>
+	                            <button type="button" class="btn btn-danger btn-sm remove-invitado" style="display: none;">X</button>
+	                        </div>
+	                    </div>
+	                `;
+	                await loadInvitados();
+	            } else {
+	                alert(result.message || 'Error al crear el evento.');
+	            }
+	        } catch (error) {
+	            alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
+	            console.error('Error:', error);
+	        }
+	    });
+
+	    window.onload = async () => {
+	        try {
+	            console.log('Iniciando carga de datos...');
+	            await loadOrganizadorInfo();
+	            console.log('Organizador cargado, procediendo a invitados...');
+	            await loadInvitados();
+	            console.log('Invitados cargados, procediendo a proveedores...');
+	            await loadProveedores();
+
+	            const addButton = document.querySelector('.add-invitado');
+	            if (addButton) {
+	                addButton.addEventListener('click', addInvitadoField);
+	            } else {
+	                console.error('No se encontró el botón .add-invitado');
+	            }
+	        } catch (error) {
+	            console.error('Error durante la carga inicial:', error.message);
+	            alert('Error durante la carga inicial: ' + error.message);
+	        }
+	    };
+	</script>
+</body>
+</html>

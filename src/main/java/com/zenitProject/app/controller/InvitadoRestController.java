@@ -24,7 +24,16 @@ public class InvitadoRestController {
     // Listar todos los invitados
     @GetMapping
     public List<Invitado> getAllInvitados() {
-        return invitadoRepository.findAll();
+        List<Invitado> invitados = invitadoRepository.findAll();
+        System.out.println("Invitados devueltos por getAllInvitados: " + invitados); // Depuración
+        return invitados;
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Invitado> getInvitadoById(@PathVariable String id) {
+        return invitadoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{correo}")

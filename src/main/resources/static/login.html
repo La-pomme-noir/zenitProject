@@ -88,47 +88,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
-    <script>
-        // Mostrar mensaje de error si la URL contiene ?error=true
-        if (window.location.search.includes('error=true')) {
-            alert('Error al iniciar sesión. Verifica tu correo, contraseña o rol.');
-        }
+	<script>
+	    // Mostrar mensaje de error si la URL contiene ?error=true
+	    if (window.location.search.includes('error=true')) {
+	        alert('Error al iniciar sesión. Verifica tu correo, contraseña o rol.');
+	    }
 
-        document.getElementById('loginForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
+	    // El formulario se envía directamente a /perform_login, manejado por Spring Security
+	    document.getElementById('loginForm').addEventListener('submit', (event) => {
+	        event.preventDefault();
+	        const correo = document.getElementById('correo').value;
+	        const password = document.getElementById('password').value;
+	        const role = document.getElementById('role').value;
 
-            const correo = document.getElementById('correo').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
+	        if (!correo || !password || !role) {
+	            alert('Por favor, completa todos los campos.');
+	            return;
+	        }
 
-            if (!correo || !password || !role) {
-                alert('Por favor, completa todos los campos.');
-                return;
-            }
-
-            try {
-                const loginResponse = await fetch('/api/users/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ correo, password, role }),
-                });
-
-                const loginResult = await loginResponse.json();
-
-                if (!loginResponse.ok) {
-                    alert(loginResult.message || 'Error al validar credenciales.');
-                    return;
-                }
-
-                const form = document.getElementById('loginForm');
-                form.submit();
-            } catch (error) {
-                alert('Error de conexión. Intenta de nuevo.');
-                console.error('Error:', error);
-            }
-        });
-    </script>
+	        // Enviar el formulario directamente a Spring Security
+	        const form = document.getElementById('loginForm');
+	        form.submit();
+	    });
+	</script>
 </body>
 </html>

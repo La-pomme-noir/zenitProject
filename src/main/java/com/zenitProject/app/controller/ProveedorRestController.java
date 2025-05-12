@@ -21,10 +21,23 @@ public class ProveedorRestController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Listar todos los proveedores
     @GetMapping
     public List<Proveedor> getAllProveedores() {
         return proveedorRepository.findAll();
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Proveedor> getProveedorById(@PathVariable String id) {
+        return proveedorRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<List<Proveedor>> getProveedoresByCategoria(@PathVariable String categoria) {
+        List<Proveedor> proveedores = proveedorRepository.findByCategoria(categoria);
+        System.out.println("Proveedores encontrados para la categoría '" + categoria + "': " + proveedores); // Depuración
+        return ResponseEntity.ok(proveedores);
     }
 
     @GetMapping("/{correo}")
@@ -82,8 +95,8 @@ public class ProveedorRestController {
         String correo = registerRequest.get("correo");
         String password = registerRequest.get("password");
         String selectedRole = registerRequest.get("role");
+        String categoria = registerRequest.get("categoria"); // Opcional
 
-        // Validar campos obligatorios
         if (nombre == null || nombre.trim().isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "El nombre es obligatorio"));
         }
@@ -105,6 +118,7 @@ public class ProveedorRestController {
         proveedor.setCorreo(correo);
         proveedor.setPassword(passwordEncoder.encode(password));
         proveedor.setRole("PROVEEDOR");
+        proveedor.setCategoria(categoria); // Si no se envía, será null
         proveedorRepository.save(proveedor);
 
         return ResponseEntity.ok(Map.of("message", "Registro exitoso", "correo", correo));

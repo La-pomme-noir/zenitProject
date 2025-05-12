@@ -1,0 +1,205 @@
+@import url(normalize.css);
+@import url(global.css);
+
+/* Asegura que el body sea un contenedor flexible y ocupe toda la altura del viewport */
+html, body {
+    height: 100%; /* Asegura que el body ocupe toda la altura */
+    margin: 0; /* Elimina márgenes por defecto */
+    padding: 0; /* Elimina padding por defecto */
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Organiza los elementos en columna */
+    min-height: 100vh; /* Asegura que el body ocupe al menos el alto del viewport */
+}
+
+/* El main crece para llenar el espacio disponible */
+main {
+    flex: 1 0 auto; /* Hace que el main crezca para llenar el espacio, pero no se encoja */
+}
+
+/* Asegurar espacio debajo del navbar */
+main.contenedor {
+    margin-top: 100px; /* Espacio para separar del navbar */
+}
+
+.admin-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas para las tres opciones */
+    gap: 1rem;
+    margin-bottom: 2rem;
+    justify-content: center; /* Centra las columnas horizontalmente */
+}
+
+.admin-content__cards {
+    display: flex;
+    flex-direction: column; /* Organizar el contenido en columna */
+    justify-content: space-between; /* Distribuir el espacio */
+    min-height: 350px; /* Altura mínima para uniformidad */
+    text-align: center; /* Centrar todo el contenido */
+}
+
+.admin-content__cards img {
+    width: 200px; /* Aumentar el tamaño de la imagen */
+    height: auto; /* Mantener proporciones */
+    display: block; /* Asegurar que esté centrada */
+    margin: 0 auto 1rem; /* Centrar y añadir espacio debajo */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+.admin-content__title {
+    font-weight: bold;
+    color: #ffffff; /* Texto blanco para resaltar */
+    text-align: center;
+    flex-grow: 1; /* Permitir que crezca */
+}
+
+.admin-content__parrafo {
+    color: #ffffff; /* Texto blanco para resaltar */
+    text-align: justify;
+    flex-grow: 1; /* Permitir que crezca */
+}
+
+.custom__button--a {
+    margin-top: auto; /* Empujar el botón hacia la parte inferior */
+    display: block;
+    background-color: var(--button);
+    padding: 1rem;
+    border-radius: .5rem;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.custom__button--a:hover {
+    background-color: var(--navbar);
+    color: var(--fondo);
+}
+
+/* ADMIN CREATE USERS */
+.admin-create {
+    margin-bottom: 2rem;
+}
+
+.admin-create__title {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2rem;
+    color: #ffff; /* Texto blanco */
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+}
+
+.admin-create__input {
+    display: block;
+    width: 95%;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    border-radius: .5rem;
+}
+
+/* ADMIN PROFILE */
+.admin-profile__img {
+    width: 150px; /* Tamaño más pequeño */
+    height: auto; /* Mantener proporciones */
+    display: block; /* Asegurar que se comporte como bloque para centrado */
+    margin: 0 auto 2rem; /* Centrar horizontalmente y mantener espacio debajo */
+    border-radius: 10px; /* Bordes redondeados para consistencia */
+}
+
+/* ADMIN LISTA */
+.admin-list {
+    padding: 20px;
+}
+
+.admin-list__title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffff; /* Texto blanco */
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.admin-list__table-container {
+    background-color: var(--button);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+}
+
+.admin-list__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-list__table-header {
+    padding: 12px;
+    text-align: left;
+    background-color: #778899;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #ffff; /* Texto blanco */
+    border-bottom: 2px solid #ddd;
+}
+
+.admin-list__table-row {
+    transition: background-color 0.3s;
+}
+
+.admin-list__table-row:hover {
+    background-color: #f1f1f1;
+}
+
+.admin-list__table-cell {
+    padding: 12px;
+    font-family: 'Open Sans', sans-serif;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-list__action-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.admin-list__action-btn--edit i {
+    color: var(--amarillo);
+}
+
+.admin-list__action-btn--edit:hover {
+    background-color: #ffe082;
+}
+
+.admin-list__action-btn--delete i {
+    color: var(--rojo);
+}
+
+.admin-list__action-btn--delete:hover {
+    background-color: #f8d7da;
+}
+
+/* Ajuste responsivo para pantallas pequeñas */
+@media (max-width: 768px) {
+    .admin-content {
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas en pantallas medianas */
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-content {
+        grid-template-columns: 1fr; /* Una columna en pantallas pequeñas */
+    }
+
+    .admin-content__cards {
+        min-height: 300px;
+    }
+}

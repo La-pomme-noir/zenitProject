@@ -15,9 +15,9 @@ public class UsersApiController {
     @Autowired
     private UserAuthenticationService userAuthenticationService;
 
-    // POST: Login con verificación de rol para todos los usuarios
+    // POST: Validar credenciales sin iniciar sesión (opcional)
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(
+    public ResponseEntity<Map<String, String>> validateCredentials(
             @RequestBody Map<String, String> loginRequest) {
         String correo = loginRequest.get("correo");
         String password = loginRequest.get("password");
@@ -28,11 +28,6 @@ public class UsersApiController {
         }
 
         Map<String, String> result = userAuthenticationService.authenticate(correo, password, selectedRole);
-
-        if ("Login exitoso".equals(result.get("message"))) {
-            return ResponseEntity.ok(result);
-        } else {
-            return ResponseEntity.badRequest().body(result);
-        }
+        return ResponseEntity.ok(result); // Solo valida, no inicia sesión
     }
 }
