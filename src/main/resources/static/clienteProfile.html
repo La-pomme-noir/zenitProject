@@ -15,7 +15,7 @@
 		href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
 		rel="stylesheet">
 	<link rel="stylesheet" href="./css/admin.css">
-	<title>Zénit Eventos Cliente Home</title>
+	<title>Zénit Eventos Cliente-Perfil</title>
 </head>
 
 <body>
@@ -35,38 +35,56 @@
 	<main class="contenedor">
 		<div class="cliente">
 			<h2 class="title__sections">Panel Cliente</h2>
-			<div class="admin-content shadow-card">
+			<div class="admin-create shadow-card">
+				<h3 class="admin-create__title">
+					Datos Personales
+				</h3>
 
-				<div class="admin-content__cards">
-					<img src="./img/profile.jpg" alt="Perfil">
-					<h3 class="admin-content__title">Perfil Cliente</h3>
-					<p class="admin-content__parrafo">En este apartado, podras ver los datos de tu perfil cliente.</p>
-					<a class="global__button" href="./clienteProfile.html">Mirar</a>
-				</div> <!--Fin cliente-content__cards-->
+				<img class="admin-profile__img" src="./img/perfil.png" alt="Icon Profile">
 
-				<div class="admin-content__cards">
-					<img src="./img/admin-create.jpg" alt="Crear Usuarios">
-					<h3 class="admin-content__title">Agenda Eventos</h3>
-					<p class="admin-content__parrafo">Esta opción te permite ver los eventos en los cuales te encuentras
-						registrados.</p>
-					<a class="global__button" href="./clienteEventos.html">Ver Eventos</a>
-				</div> <!--Fin cliente-content__cards-->
+				<label for="clienteNombre" class="admin-create__label">Nombre Completo <i
+						class="fa-solid fa-users-rectangle"></i></label>
+				<input type="text" id="clienteNombre" class="admin-create__input" readonly>
 
-				<div class="admin-content__cards">
-					<img src="./img/admin-list.jpg" alt="Listar Usuarios">
-					<h3 class="admin-content__title">Mirar + Eventos</h3>
-					<p class="admin-content__parrafo">Esta opción te permite ver todos los eventos que se encuentran 
-						en zenit.</p>
-					<a class="global__button" href="./clienteMoreEventos.html">Más Eventos</a>
-				</div> <!--Fin cliente-content__cards-->
+				<label for="clienteCorreo" class="admin-create__label">Correo <i class="fa-solid fa-envelope"></i></label>
+				<input type="email" id="clienteCorreo" class="admin-create__input" readonly>
 
-			</div> <!--Fin cliente-content-->
+			</div> <!--Fin cliente-create-->
 		</div> <!--Fin cliente-->
 	</main>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
 	<script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+	<script>
+		async function loadClienteProfile() {
+			try {
+				// Obtener el perfil del administrador autenticado
+				const response = await fetch('/api/clientes/profile', {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${localStorage.getItem('token') || ''}` // Si usas JWT; ajusta según tu autenticación
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error(`Error al obtener el perfil: ${response.statusText}`);
+				}
+
+				const profile = await response.json();
+				document.getElementById('clienteNombre').value = profile.nombre || 'N/A'; // Nota: El endpoint actual no devuelve "nombre", ajustaremos esto
+				document.getElementById('clienteCorreo').value = profile.correo || 'N/A';
+
+			} catch (error) {
+				console.error('Error al cargar el perfil del cliente:', error);
+				alert('Error al cargar el perfil: ' + error.message);
+			}
+		}
+
+		// Cargar el perfil al iniciar la página
+		window.onload = loadClienteProfile;
+	</script>
 </body>
 
 </html>

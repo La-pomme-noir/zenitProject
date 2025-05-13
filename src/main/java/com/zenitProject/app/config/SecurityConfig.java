@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/clientes/login", "/rest/clientes/**", "/api/users/login", "/rest/organizadores/public/eventos").permitAll()
                 .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**").hasRole("ADMIN")
                 .requestMatchers("/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").authenticated()
+                .requestMatchers("/api/clientes/profile").hasRole("CLIENTE")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

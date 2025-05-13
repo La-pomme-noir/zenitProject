@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p><strong>Requisitos:</strong> ${evento.requisitos}</p>
 						<p><strong>Organizador:</strong> ${evento.organizadorNombre}</p>
                     </div>
-                    <button class="login__button">Obtener Entradas</button>
+                    <button class="global__button">Obtener Entradas</button>
                 `;
                 eventosContainer.appendChild(card);
             });

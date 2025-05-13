@@ -117,6 +117,22 @@ img {
     color: #ffffff; /* Texto blanco al hacer hover */
 }
 
+.global__button {
+    background-color: var(--button); /* #A1A6B4, gris azulado claro */
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-weight: bold;
+    color: #000000; /* Texto negro para contraste con el botón */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.global__button:hover {
+    background-color: var(--navbar); /* #36413E, gris verdoso oscuro */
+    color: #ffffff; /* Texto blanco al hacer hover */
+}
 /* ENCABEZADO */
 .header {
     background-color: #2C2F36; /* #A1A6B4, gris azulado claro */
