@@ -1,38 +1,280 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="Description" content="Enter your description here"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<link rel="stylesheet" href="assets/css/style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/admin.css">
-<title>Zénit Eventos Supervisor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Zénit Eventos Supervisor"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/admin.css">
+    <title>Zénit Eventos Supervisor</title>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1C2526;
+            color: white;
+        }
+        .header {
+            background-color: #1C2526;
+            padding: 1rem;
+            border-bottom: 1px solid #3A4445;
+        }
+        .header__logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header__navbar a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .header__navbar a:hover {
+            color: #00C4B4;
+        }
+        .contenedor {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        .card {
+            background-color: #3A4445;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .btn-primary {
+            background-color: #00C4B4;
+            border-color: #00C4B4;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+        }
+        .btn-primary:hover {
+            background-color: #009688;
+            border-color: #009688;
+        }
+        .btn-success, .btn-danger, .btn-warning {
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+        }
+        .table {
+            background-color: #3A4445;
+            color: white;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+            border-color: #4A5556;
+        }
+        .form-control {
+            background-color: #FFFFFF;
+            border-radius: 5px;
+            color: #333;
+        }
+        .form-label {
+            font-weight: 600;
+        }
+        h2 {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .list-group-item {
+            background-color: #4A5556;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
         <div class="header__logo">
-            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit"></a>
+            <a href="./index.html"><img src="./img/logoZenitCut.png" alt="LogoZénit" width="100"></a>
             <nav class="header__navbar">
                 <a href="/index.html" class="navbar__links">Inicio</a>
                 <a href="/event.html" class="navbar__links">Eventos</a>
-                <a href="/cliente.html" class="navbar__links navbar__links--activo">Supervisor</a>
+                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
-        </div> <!--Fin header__logo-->
-    </header> <!--Fin Header-->
+        </div>
+    </header>
 
     <main class="contenedor">
+        <!-- Perfil del Supervisor -->
+        <div class="card">
+            <h2>Perfil del Supervisor</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3>Sobre Mí</h3>
+                    <p>Soy un supervisor encargado de supervisar y aprobar los eventos de Zénit Eventos. Mi rol es garantizar que todos los eventos cumplan con los estándares establecidos y se ejecuten sin inconvenientes.</p>
+                </div>
+                <div class="col-md-6">
+                    <h3>Información</h3>
+                    <ul class="list-group">
+                        <li class="list-group-item">Nombre: Esteban Supervisor</li>
+                        <li class="list-group-item">Rol: Supervisor</li>
+                        <li class="list-group-item">Correo: Esteban@gmail.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-    </main> 
+        <!-- Lista de Eventos -->
+        <div class="card">
+            <h2>Gestión de Eventos</h2>
+            <div class="mb-3">
+                <button id="filterPending" class="btn btn-warning">Pendientes</button>
+                <button id="filterApproved" class="btn btn-success">Aprobados</button>
+                <button id="filterDisapproved" class="btn btn-danger">Desaprobados</button>
+                <button id="filterAll" class="btn btn-primary">Todos</button>
+            </div>
+            <table class="table table-striped" id="eventsTable">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="eventsBody">
+                </tbody>
+            </table>
+        </div>
+    </main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-<script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
-</body>
-</html>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:8092/rest/eventos';
+        const SUPERVISOR_CORREO = 'supervisor@zenit.com'; // Sustituir por autenticación real
+
+        let currentFilter = 'all';
+
+        async function loadEvents(filter = 'all') {
+            try {
+                const response = await fetch(`${API_URL}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                if (!response.ok) throw new Error('Error al cargar eventos');
+                const events = await response.json();
+
+                const eventsBody = document.getElementById('eventsBody');
+                eventsBody.innerHTML = '';
+
+                const filteredEvents = filter === 'all' 
+                    ? events 
+                    : events.filter(event => {
+                        const estado = event.estadoAprobacion || 'PENDIENTE';
+                        return (filter === 'pending' && estado === 'PENDIENTE') ||
+                               (filter === 'approved' && estado === 'APROBADO') ||
+                               (filter === 'disapproved' && estado === 'DESAPROBADO');
+                    });
+
+                if (filteredEvents.length === 0) {
+                    eventsBody.innerHTML = '<tr><td colspan="4">No hay eventos para mostrar.</td></tr>';
+                    return;
+                }
+
+                filteredEvents.forEach(event => {
+                    const estado = event.estadoAprobacion || 'PENDIENTE';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.nombreEvento || 'Sin nombre'}</td>
+                        <td>${new Date(event.fecha).toLocaleDateString()}</td>
+                        <td>${estado}</td>
+                        <td>
+                            ${estado === 'PENDIENTE' ? `
+                                <button class="btn btn-success btn-sm me-2" onclick="approveEvent('${event.id}')">
+                                    <i class="fas fa-check"></i> Aprobar
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="disapproveEvent('${event.id}')">
+                                    <i class="fas fa-times"></i> Desaprobar
+                                </button>
+                            ` : '-'}
+                        </td>
+                    `;
+                    eventsBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('eventsBody').innerHTML = '<tr><td colspan="4">Error al cargar eventos</td></tr>';
+            }
+        }
+
+        async function approveEvent(eventId) {
+            try {
+                const response = await fetch(`${API_URL}/${eventId}/estado`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estadoAprobacion: 'APROBADO' }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    alert('Evento aprobado exitosamente');
+                    loadEvents(currentFilter);
+                } else {
+                    alert('Error al aprobar el evento');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en la conexión con el servidor');
+            }
+        }
+
+        async function disapproveEvent(eventId) {
+            try {
+                const response = await fetch(`${API_URL}/${eventId}/estado`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estadoAprobacion: 'DESAPROBADO' }),
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    alert('Evento desaprobado exitosamente');
+                    loadEvents(currentFilter);
+                } else {
+                    alert('Error al desaprobar el evento');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en la conexión con el servidor');
+            }
+        }
+
+        document.getElementById('filterPending').addEventListener('click', () => {
+            currentFilter = 'pending';
+            loadEvents('pending');
+        });
+        document.getElementById('filterApproved').addEventListener('click', () => {
+            currentFilter = 'approved';
+            loadEvents('approved');
+        });
+        document.getElementById('filterDisapproved').addEventListener('click', () => {
+            currentFilter = 'disapproved';
+            loadEvents('disapproved');
+        });
+        document.getElementById('filterAll').addEventListener('click', () => {
+            currentFilter = 'all';
+            loadEvents('all');
+        });
+
+        window.onload = () => {
+            loadEvents('all');
+        };
+    </script>
