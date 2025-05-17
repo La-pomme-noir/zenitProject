@@ -5,11 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenitProject.app.entidades.Evento;
 import com.zenitProject.app.entidades.Invitado;
 import com.zenitProject.app.entidades.Organizador;
@@ -21,10 +25,15 @@ import com.zenitProject.app.repository.OrganizadorRepository;
 import com.zenitProject.app.repository.ProveedorRepository;
 import com.zenitProject.app.repository.SupervisorRepository;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/rest/organizadores")
@@ -44,9 +53,11 @@ public class OrganizadorRestController {
 
     @Autowired
     private SupervisorRepository supervisorRepository;
-
+    
     @Autowired
     private PasswordEncoder passwordEncoder;
+    
+    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     // Listar todos los organizadores
     @GetMapping
@@ -112,91 +123,111 @@ public class OrganizadorRestController {
     }
     
     // Nuevo endpoint para crear un evento
-    @PostMapping("/eventos")
-    public ResponseEntity<?> createEvento(@RequestBody Map<String, Object> eventData, Authentication authentication) {
+    @PostMapping(value = "/eventos", consumes = {"multipart/form-data"})
+    public ResponseEntity<?> createEvento(
+            @RequestPart(value = "eventData", required = true) String eventDataStr,
+            @RequestPart(value = "imagen", required = false) MultipartFile imagen,
+            Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "No estás autenticado. Por favor, inicia sesión.");
-            return ResponseEntity.status(401).body(errorResponse);
+            return ResponseEntity.status(401).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
         }
 
         String correo = authentication.getName();
         Organizador organizador = organizadorRepository.findByCorreo(correo);
         if (organizador == null) {
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Organizador no encontrado.");
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(404).body(Map.of("message", "Organizador no encontrado."));
         }
 
-        // Crear el evento
-        Evento evento = new Evento();
-        evento.setNombreEvento((String) eventData.get("nombreEvento"));
-        evento.setFecha((String) eventData.get("fecha"));
-        evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
-        evento.setProveedores((Map<String, String>) eventData.get("proveedores"));
-        evento.setLugar((String) eventData.get("lugar"));
-        evento.setHora((String) eventData.get("hora"));
-        evento.setCiudad((String) eventData.get("ciudad"));
-        evento.setDescripcion((String) eventData.get("descripcion"));
-        evento.setRequisitos((String) eventData.get("requisitos"));
-        evento.setOrganizadorId(organizador.getId());
-        evento.setOrganizadorNombre(organizador.getNombre());
+        try {
+            // Parsear el eventData desde el String JSON
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> eventData = objectMapper.readValue(eventDataStr, new TypeReference<Map<String, Object>>() {});
 
-        // Manejar invitados (esperamos IDs, no nombres)
-        @SuppressWarnings("unchecked")
-        List<String> invitadosIds = (List<String>) eventData.get("invitados");
-        if (invitadosIds != null && !invitadosIds.isEmpty()) {
-            for (String invitadoId : invitadosIds) {
-                Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
-                if (invitado != null) {
-                    // invitaciones ya está inicializado, agregar el ID del evento
-                    invitado.getInvitaciones().add(evento.getId());
-                    invitadoRepository.save(invitado);
-                } else {
-                    System.out.println("Invitado no encontrado con ID: " + invitadoId); // Depuración
-                }
+            Evento evento = new Evento();
+            evento.setOrganizadorId(organizador.getId());
+            evento.setOrganizadorNombre(organizador.getNombre());
+            evento.setNombreEvento((String) eventData.get("nombreEvento"));
+            evento.setFecha((String) eventData.get("fecha"));
+            evento.setLugar((String) eventData.get("lugar"));
+            evento.setHora((String) eventData.get("hora"));
+            evento.setCiudad((String) eventData.get("ciudad"));
+            evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
+            evento.setDescripcion((String) eventData.get("descripcion"));
+            evento.setRequisitos((String) eventData.get("requisitos"));
+            evento.setEstadoAprobacion("Pendiente"); // Ajusta según tu lógica
+
+            // Manejar invitados
+            @SuppressWarnings("unchecked")
+            List<String> invitados = (List<String>) eventData.get("invitados");
+            if (invitados != null) {
+                evento.setInvitados(new ArrayList<>(invitados));
             }
-            evento.setInvitados(invitadosIds); // Asegúrate de que Evento tenga este campo
-        }
 
-        // Validar que los proveedores existan (opcional, según tu lógica)
-        if (evento.getProveedores() != null) {
-            for (Map.Entry<String, String> entry : evento.getProveedores().entrySet()) {
-                String proveedorId = entry.getValue();
-                if (proveedorId != null && !proveedorId.isEmpty()) {
-                    Proveedor proveedor = proveedorRepository.findById(proveedorId).orElse(null);
-                    if (proveedor == null) {
-                        System.out.println("Proveedor no encontrado con ID: " + proveedorId); // Depuración
-                        // Opcional: return ResponseEntity.badRequest().body(Map.of("message", "Proveedor no encontrado: " + proveedorId));
+            // Manejar proveedores
+            @SuppressWarnings("unchecked")
+            Map<String, String> proveedores = (Map<String, String>) eventData.get("proveedores");
+            if (proveedores != null) {
+                evento.setProveedores(new HashMap<>(proveedores));
+            }
+
+            // Manejar ubicacionesPrecios
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> ubicacionesPrecios = (List<Map<String, Object>>) eventData.get("ubicacionesPrecios");
+            if (ubicacionesPrecios != null) {
+                evento.setUbicacionesPrecios(ubicacionesPrecios);
+            }
+
+            // Manejar la imagen
+            if (imagen != null && !imagen.isEmpty()) {
+                try {
+                    Path uploadPath = Paths.get(UPLOAD_DIR);
+                    if (!Files.exists(uploadPath)) {
+                        Files.createDirectories(uploadPath);
+                        System.out.println("Directorio creado: " + uploadPath.toAbsolutePath());
                     }
+
+                    // Imprimir el nombre original del archivo subido
+                    System.out.println("Nombre original del archivo subido: " + imagen.getOriginalFilename());
+
+                    // Generar un UUID y construir el nombre del archivo
+                    String uuid = UUID.randomUUID().toString();
+                    String originalFileName = imagen.getOriginalFilename();
+                    String fileName = uuid + "_" + (originalFileName != null ? originalFileName : "default.jpg");
+                    Path filePath = uploadPath.resolve(fileName);
+
+                    // Guardar la imagen
+                    System.out.println("Guardando imagen en: " + filePath.toAbsolutePath());
+                    Files.write(filePath, imagen.getBytes());
+                    System.out.println("Imagen guardada exitosamente en: " + filePath.toAbsolutePath());
+
+                    // Generar la URL con el mismo nombre
+                    String imageUrl = "/uploads/" + fileName;
+                    System.out.println("URL generada para la imagen: " + imageUrl);
+                    evento.setImagenUrl(imageUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(500).body(Map.of("message", "Error al guardar la imagen: " + e.getMessage()));
                 }
+            } else {
+                System.out.println("No se proporcionó ninguna imagen para el evento.");
+                evento.setImagenUrl(null); // O un valor por defecto si lo deseas
             }
+
+            Evento savedEvento = eventoRepository.save(evento);
+            System.out.println("Evento guardado con imagenUrl: " + savedEvento.getImagenUrl());
+            return ResponseEntity.status(201).body(Map.of("message", "Evento creado exitosamente.", "evento", savedEvento));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(400).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
         }
-
-        // Guardar el evento
-        Evento savedEvento = eventoRepository.save(evento);
-
-        // Actualizar eventosOrganizados
-        long count = eventoRepository.countByOrganizadorId(organizador.getId());
-        organizador.setEventosOrganizados((int) count);
-        organizadorRepository.save(organizador);
-
-        // Notificar a los supervisores
-        List<Supervisor> supervisores = supervisorRepository.findAll();
-        for (Supervisor supervisor : supervisores) {
-            if (supervisor.getEventosAprobados() == null) {
-                supervisor.setEventosAprobados(new ArrayList<>());
-            }
-            supervisor.getEventosAprobados().add(savedEvento.getId());
-            supervisorRepository.save(supervisor);
-        }
-
-        return ResponseEntity.ok(Map.of("message", "Evento creado exitosamente", "id", savedEvento.getId()));
     }
     
     //Actualizar evento
-    @PutMapping("/eventos/{id}")
-    public ResponseEntity<?> updateEvento(@PathVariable String id, @RequestBody Map<String, Object> eventData, Authentication authentication) {
+    @PutMapping(value = "/eventos/{id}", consumes = "application/json")
+    public ResponseEntity<?> updateEvento(
+            @PathVariable String id,
+            @RequestBody Map<String, Object> eventData,
+            Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(401).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
         }
@@ -212,32 +243,46 @@ public class OrganizadorRestController {
                     if (!evento.getOrganizadorId().equals(organizador.getId())) {
                         return ResponseEntity.status(403).body(Map.of("message", "No tienes permiso para editar este evento."));
                     }
-                    evento.setNombreEvento((String) eventData.get("nombreEvento"));
-                    evento.setFecha((String) eventData.get("fecha"));
-                    evento.setLugar((String) eventData.get("lugar"));
-                    evento.setHora((String) eventData.get("hora"));
-                    evento.setCiudad((String) eventData.get("ciudad"));
-                    evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
-                    evento.setDescripcion((String) eventData.get("descripcion"));
-                    evento.setRequisitos((String) eventData.get("requisitos"));
 
-                    // Actualizar invitados
-                    @SuppressWarnings("unchecked")
-                    List<String> newInvitados = (List<String>) eventData.get("invitados");
-                    if (newInvitados != null) {
-                        // Limpiar invitados existentes y agregar nuevos
-                        evento.setInvitados(new ArrayList<>(newInvitados)); // Reemplaza la lista completa
+                    try {
+                        evento.setNombreEvento((String) eventData.get("nombreEvento"));
+                        evento.setFecha((String) eventData.get("fecha"));
+                        evento.setLugar((String) eventData.get("lugar"));
+                        evento.setHora((String) eventData.get("hora"));
+                        evento.setCiudad((String) eventData.get("ciudad"));
+                        evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
+                        evento.setDescripcion((String) eventData.get("descripcion"));
+                        evento.setRequisitos((String) eventData.get("requisitos"));
+                        evento.setEstadoAprobacion((String) eventData.get("estadoAprobacion"));
+
+                        // Actualizar invitados
+                        @SuppressWarnings("unchecked")
+                        List<String> newInvitados = (List<String>) eventData.get("invitados");
+                        if (newInvitados != null) {
+                            evento.setInvitados(new ArrayList<>(newInvitados));
+                        }
+
+                        // Actualizar proveedores
+                        @SuppressWarnings("unchecked")
+                        Map<String, String> newProveedores = (Map<String, String>) eventData.get("proveedores");
+                        if (newProveedores != null) {
+                            evento.setProveedores(new HashMap<>(newProveedores));
+                        }
+
+                        // Actualizar ubicacionesPrecios
+                        @SuppressWarnings("unchecked")
+                        List<Map<String, Object>> newUbicacionesPrecios = (List<Map<String, Object>>) eventData.get("ubicacionesPrecios");
+                        if (newUbicacionesPrecios != null) {
+                            evento.setUbicacionesPrecios(newUbicacionesPrecios);
+                        }
+
+                        // No se procesa la imagen (se mantiene la existente)
+                        Evento updatedEvento = eventoRepository.save(evento);
+                        return ResponseEntity.ok(updatedEvento);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return ResponseEntity.status(400).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
                     }
-
-                    // Actualizar proveedores
-                    @SuppressWarnings("unchecked")
-                    Map<String, String> newProveedores = (Map<String, String>) eventData.get("proveedores");
-                    if (newProveedores != null) {
-                        evento.setProveedores(new HashMap<>(newProveedores)); // Reemplaza el mapa completo
-                    }
-
-                    Evento updatedEvento = eventoRepository.save(evento);
-                    return ResponseEntity.ok(updatedEvento);
                 })
                 .orElse(ResponseEntity.status(404).body(Map.of("message", "Evento no encontrado.")));
     }

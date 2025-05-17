@@ -20,13 +20,13 @@ public class Evento {
     private String fecha;
 
     @Field("invitados")
-    private List<String> invitados; // Lista de nombres o IDs de invitados
+    private List<String> invitados;
 
     @Field("cantidadSillas")
     private Integer cantidadSillas;
 
     @Field("proveedores")
-    private Map<String, String> proveedores; // Mapa: categoría -> nombre o ID del proveedor
+    private Map<String, String> proveedores;
 
     @Field("lugar")
     private String lugar;
@@ -50,118 +50,60 @@ public class Evento {
     private String organizadorNombre;
 
     @Field("estadoAprobacion")
-    private String estadoAprobacion = "Pendiente"; // Valores: Pendiente, Aprobado, Desaprobado
+    private String estadoAprobacion = "Pendiente";
+
+    @Field("imagenUrl")
+    private String imagenUrl; // URL de la imagen almacenada
+
+    @Field("ubicacionesPrecios")
+    private List<Map<String, Object>> ubicacionesPrecios; // Array de objetos {ubicacion, precio}
 
     // Getters y Setters
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getNombreEvento() { return nombreEvento; }
+    public void setNombreEvento(String nombreEvento) { this.nombreEvento = nombreEvento; }
 
-    public String getNombreEvento() {
-        return nombreEvento;
-    }
+    public String getFecha() { return fecha; }
+    public void setFecha(String fecha) { this.fecha = fecha; }
 
-    public void setNombreEvento(String nombreEvento) {
-        this.nombreEvento = nombreEvento;
-    }
+    public List<String> getInvitados() { return invitados; }
+    public void setInvitados(List<String> invitados) { this.invitados = invitados; }
 
-    public String getFecha() {
-        return fecha;
-    }
+    public Integer getCantidadSillas() { return cantidadSillas; }
+    public void setCantidadSillas(Integer cantidadSillas) { this.cantidadSillas = cantidadSillas; }
 
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
+    public Map<String, String> getProveedores() { return proveedores; }
+    public void setProveedores(Map<String, String> proveedores) { this.proveedores = proveedores; }
 
-    public List<String> getInvitados() {
-        return invitados;
-    }
+    public String getLugar() { return lugar; }
+    public void setLugar(String lugar) { this.lugar = lugar; }
 
-    public void setInvitados(List<String> invitados) {
-        this.invitados = invitados;
-    }
+    public String getHora() { return hora; }
+    public void setHora(String hora) { this.hora = hora; }
 
-    public Integer getCantidadSillas() {
-        return cantidadSillas;
-    }
+    public String getCiudad() { return ciudad; }
+    public void setCiudad(String ciudad) { this.ciudad = ciudad; }
 
-    public void setCantidadSillas(Integer cantidadSillas) {
-        this.cantidadSillas = cantidadSillas;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public Map<String, String> getProveedores() {
-        return proveedores;
-    }
+    public String getRequisitos() { return requisitos; }
+    public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
 
-    public void setProveedores(Map<String, String> proveedores) {
-        this.proveedores = proveedores;
-    }
+    public String getOrganizadorId() { return organizadorId; }
+    public void setOrganizadorId(String organizadorId) { this.organizadorId = organizadorId; }
 
-    public String getLugar() {
-        return lugar;
-    }
+    public String getOrganizadorNombre() { return organizadorNombre; }
+    public void setOrganizadorNombre(String organizadorNombre) { this.organizadorNombre = organizadorNombre; }
 
-    public void setLugar(String lugar) {
-        this.lugar = lugar;
-    }
+    public String getEstadoAprobacion() { return estadoAprobacion; }
+    public void setEstadoAprobacion(String estadoAprobacion) { this.estadoAprobacion = estadoAprobacion; }
 
-    public String getHora() {
-        return hora;
-    }
+    public String getImagenUrl() { return imagenUrl; }
+    public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
-    public void setHora(String hora) {
-        this.hora = hora;
-    }
-
-    public String getCiudad() {
-        return ciudad;
-    }
-
-    public void setCiudad(String ciudad) {
-        this.ciudad = ciudad;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getRequisitos() {
-        return requisitos;
-    }
-
-    public void setRequisitos(String requisitos) {
-        this.requisitos = requisitos;
-    }
-
-    public String getOrganizadorId() {
-        return organizadorId;
-    }
-
-    public void setOrganizadorId(String organizadorId) {
-        this.organizadorId = organizadorId;
-    }
-
-    public String getOrganizadorNombre() {
-        return organizadorNombre;
-    }
-
-    public void setOrganizadorNombre(String organizadorNombre) {
-        this.organizadorNombre = organizadorNombre;
-    }
-
-    public String getEstadoAprobacion() {
-        return estadoAprobacion;
-    }
-
-    public void setEstadoAprobacion(String estadoAprobacion) {
-        this.estadoAprobacion = estadoAprobacion;
-    }
+    public List<Map<String, Object>> getUbicacionesPrecios() { return ubicacionesPrecios; }
+    public void setUbicacionesPrecios(List<Map<String, Object>> ubicacionesPrecios) { this.ubicacionesPrecios = ubicacionesPrecios; }
 }
