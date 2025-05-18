@@ -286,11 +286,18 @@ public class OrganizadorRestController {
     @GetMapping("/public/eventos")
     public ResponseEntity<Map<String, Object>> getAllEventos(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size) {
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(required = false) String search) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Evento> eventosPage = eventoRepository.findByEstadoAprobacion("Pendiente", pageable);
+        Page<Evento> eventosPage;
 
-        // Mapear eventos a un formato que excluya campos sensibles
+        if (search != null && !search.trim().isEmpty()) {
+            eventosPage = eventoRepository.findByEstadoAprobacionAndNombreEventoContaining("Pendiente", search, pageable);
+        } else {
+            eventosPage = eventoRepository.findByEstadoAprobacion("Pendiente", pageable);
+        }
+
+        // Mapear eventos a un formato que incluya los campos necesarios
         List<Map<String, Object>> eventosFiltrados = eventosPage.getContent().stream()
                 .map(evento -> {
                     Map<String, Object> eventoMap = new HashMap<>();
@@ -304,6 +311,8 @@ public class OrganizadorRestController {
                     eventoMap.put("hora", evento.getHora());
                     eventoMap.put("descripcion", evento.getDescripcion());
                     eventoMap.put("requisitos", evento.getRequisitos());
+                    eventoMap.put("imagenUrl", evento.getImagenUrl());
+                    eventoMap.put("ubicacionesPrecios", evento.getUbicacionesPrecios());
                     return eventoMap;
                 })
                 .collect(Collectors.toList());

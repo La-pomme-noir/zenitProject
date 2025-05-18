@@ -30,6 +30,9 @@
     <main class="contenedor">
         <section class="eventos">
             <h2 class="title__sections">Calendario</h2>
+            <div class="eventos__search mb-4">
+                <input type="text" id="search-input" class="form-control" placeholder="Buscar eventos por nombre...">
+            </div>
             <div class="eventos__cards shadow-card" id="eventos-container">
                 <!-- Eventos serán cargados dinámicamente -->
             </div>
@@ -40,30 +43,48 @@
             </div>
         </section>
     </main>
-		
-	<footer class="footer">
-		    <div class="footer__logo">
-		        <a href="./index.html">
-		            <img src="./img/logo1.png" alt="LogoZénit">
-		        </a>
-		        <div class="footer__social">
-		            <a href="#"><i class="fab fa-twitter"></i></a>
-		            <a href="#"><i class="fab fa-facebook-f"></i></a>
-		            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-		        </div>
-		    </div>
-		    <nav class="footer__navbar">
-		        <a href="/index.html" class="footer__links ">Nosotros</a>
-		        <a href="#" class="footer__links">Contacto</a>
-		        <a href="#" class="footer__links">Terminos y condiciones</a>
-		        <a href="#" class="footer__links">Politica cookies</a>
-		    </nav>
-		</footer>
+
+    <!-- Modal para ubicaciones y precios -->
+    <div class="modal fade" id="preciosModal" tabindex="-1" aria-labelledby="preciosModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content modal-precios">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="preciosModalLabel">Entradas</h5>
+					<!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+                </div>
+                <div class="modal-body" id="preciosModalBody">
+                    <!-- Contenido dinámico -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-close--modal" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/nosotros.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Terminos y condiciones</a>
+            <a href="#" class="footer__links">Politica cookies</a>
+        </nav>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script src="./js/eventosCards.js"></script>
-	<script src="./js/dateEventos.js"></script>
+    <script src="./js/dateEventos.js"></script>
 </body>
 </html>

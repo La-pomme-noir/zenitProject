@@ -28,7 +28,7 @@
     margin: 1rem;
 }
 .evento__card-aforo {
-	margin: 1rem;
+    margin: 1rem;
 }
 .evento__card-more {
     color: var(--blanco);
@@ -80,4 +80,46 @@
 }
 .pagination .btn {
     padding: 0.5rem 1rem;
+}
+.eventos__search {
+    max-width: 500px;
+    margin: 0 auto 2rem;
+}
+.eventos__search .form-control {
+    border-radius: .5rem;
+    padding: .75rem;
+}
+.modal-precios {
+	background-color: var(--negro);
+}
+.modal-title {
+	font-size: 1.8rem;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+.modal-body {
+	font-size: 1.7rem;
+}
+.title-location {
+	font-size: 1.6rem;
+}
+.btn-comprar--entrada {
+	font-weight: bold;
+	font-size: 1.4rem;
+	margin-bottom: 1rem;
+}
+.btn-close--modal {
+	background-color: var(--button);
+	font-size: 1.2rem;
+	padding: 1rem;
+	border-radius: .5rem;
+	margin-bottom: .5rem;
+	color: var(--fondo);
+	text-transform: uppercase;
+	transition: background-color 0.3s ease;
+	font-weight: bold;
+}
+.btn-close--modal:hover {
+	background-color: var(--navbar);
+	color: var(--blanco);
 }
