@@ -15,20 +15,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenitProject.app.entidades.Evento;
-import com.zenitProject.app.entidades.Invitado;
 import com.zenitProject.app.entidades.Organizador;
-import com.zenitProject.app.entidades.Proveedor;
-import com.zenitProject.app.entidades.Supervisor;
 import com.zenitProject.app.repository.EventoRepository;
 import com.zenitProject.app.repository.InvitadoRepository;
 import com.zenitProject.app.repository.OrganizadorRepository;
 import com.zenitProject.app.repository.ProveedorRepository;
 import com.zenitProject.app.repository.SupervisorRepository;
+import com.cloudinary.Cloudinary;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,20 +39,12 @@ public class OrganizadorRestController {
     
     @Autowired
     private EventoRepository eventoRepository;
-
+    
     @Autowired
-    private InvitadoRepository invitadoRepository;
-
-    @Autowired
-    private ProveedorRepository proveedorRepository;
-
-    @Autowired
-    private SupervisorRepository supervisorRepository;
+    private Cloudinary cloudinary;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
-    private static final String UPLOAD_DIR = "src/main/resources/static/uploads/";
 
     // Listar todos los organizadores
     @GetMapping
@@ -154,7 +141,7 @@ public class OrganizadorRestController {
             evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
             evento.setDescripcion((String) eventData.get("descripcion"));
             evento.setRequisitos((String) eventData.get("requisitos"));
-            evento.setEstadoAprobacion("Pendiente"); // Ajusta según tu lógica
+            evento.setEstadoAprobacion("Pendiente");
 
             // Manejar invitados
             @SuppressWarnings("unchecked")
@@ -177,40 +164,20 @@ public class OrganizadorRestController {
                 evento.setUbicacionesPrecios(ubicacionesPrecios);
             }
 
-            // Manejar la imagen
+            // Subir imagen a Cloudinary
             if (imagen != null && !imagen.isEmpty()) {
                 try {
-                    Path uploadPath = Paths.get(UPLOAD_DIR);
-                    if (!Files.exists(uploadPath)) {
-                        Files.createDirectories(uploadPath);
-                        System.out.println("Directorio creado: " + uploadPath.toAbsolutePath());
-                    }
-
-                    // Imprimir el nombre original del archivo subido
-                    System.out.println("Nombre original del archivo subido: " + imagen.getOriginalFilename());
-
-                    // Generar un UUID y construir el nombre del archivo
-                    String uuid = UUID.randomUUID().toString();
-                    String originalFileName = imagen.getOriginalFilename();
-                    String fileName = uuid + "_" + (originalFileName != null ? originalFileName : "default.jpg");
-                    Path filePath = uploadPath.resolve(fileName);
-
-                    // Guardar la imagen
-                    System.out.println("Guardando imagen en: " + filePath.toAbsolutePath());
-                    Files.write(filePath, imagen.getBytes());
-                    System.out.println("Imagen guardada exitosamente en: " + filePath.toAbsolutePath());
-
-                    // Generar la URL con el mismo nombre
-                    String imageUrl = "/uploads/" + fileName;
-                    System.out.println("URL generada para la imagen: " + imageUrl);
+                    Map<String, Object> uploadResult = cloudinary.uploader().upload(imagen.getBytes(), Map.of(
+                            "public_id", UUID.randomUUID().toString(),
+                            "resource_type", "image"
+                    ));
+                    String imageUrl = (String) uploadResult.get("secure_url");
                     evento.setImagenUrl(imageUrl);
+                    System.out.println("Imagen subida a Cloudinary con URL: " + imageUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return ResponseEntity.status(500).body(Map.of("message", "Error al guardar la imagen: " + e.getMessage()));
+                    return ResponseEntity.status(500).body(Map.of("message", "Error al subir la imagen a Cloudinary: " + e.getMessage()));
                 }
-            } else {
-                System.out.println("No se proporcionó ninguna imagen para el evento.");
-                evento.setImagenUrl(null); // O un valor por defecto si lo deseas
             }
 
             Evento savedEvento = eventoRepository.save(evento);

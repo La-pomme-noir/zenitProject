@@ -42,13 +42,6 @@
             margin-top: 15px;
             text-align: center;
         }
-        #image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 10px;
-            border-radius: 10px;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -169,7 +162,6 @@
                         <div class="upload-section">
                             <label for="imagen" class="admin-create__label">Imagen del Evento <i class="fa-solid fa-image"></i></label>
                             <input type="file" id="imagen" name="imagen" accept="image/*" required>
-                            <img id="image-preview" alt="Vista previa de la imagen">
                         </div>
 
                         <label for="descripcion" class="admin-create__label">Descripción <i class="fa-solid fa-file-alt"></i></label>
@@ -201,8 +193,10 @@
                 });
                 if (!response.ok) throw new Error(`Error: ${response.status} - ${await response.text()}`);
                 const profile = await response.json();
-                document.getElementById('organizadorId').value = profile.id || 'N/A';
-                document.getElementById('organizadorNombre').value = profile.nombre || 'N/A';
+                const organizadorId = document.getElementById('organizadorId');
+                const organizadorNombre = document.getElementById('organizadorNombre');
+                if (organizadorId) organizadorId.value = profile.id || 'N/A';
+                if (organizadorNombre) organizadorNombre.value = profile.nombre || 'N/A';
             } catch (error) {
                 console.error('Error al cargar organizador:', error);
                 alert('Error al cargar organizador: ' + error.message);
@@ -222,6 +216,7 @@
                 if (selects.length === 0) return;
                 invitadoTemplate = selects[0].cloneNode(true);
                 selects.forEach(select => {
+                    const currentValue = select.value;
                     select.innerHTML = '<option value="" disabled selected>Selecciona un invitado</option>';
                     invitados.forEach(invitado => {
                         const option = document.createElement('option');
@@ -229,6 +224,7 @@
                         option.textContent = invitado.nombre || 'Sin nombre';
                         select.appendChild(option);
                     });
+                    select.value = currentValue;
                 });
             } catch (error) {
                 console.error('Error al cargar invitados:', error);
@@ -249,7 +245,10 @@
                     const proveedores = await response.json();
                     const selectId = `proveedor${categoria.replace(/\s/g, '')}`;
                     const select = document.getElementById(selectId);
-                    if (!select) continue;
+                    if (!select) {
+                        console.warn(`No se encontró el elemento con ID ${selectId}`);
+                        continue;
+                    }
                     select.innerHTML = '<option value="" disabled selected>Selecciona un proveedor</option>';
                     proveedores.forEach(proveedor => {
                         const option = document.createElement('option');
@@ -297,121 +296,125 @@
             container.appendChild(newLocation);
         }
 
-		document.getElementById('createEventForm').addEventListener('submit', async (event) => {
-		    event.preventDefault();
+        document.getElementById('createEventForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-		    const formData = new FormData();
-		    const imagenInput = document.getElementById('imagen');
-		    const imagen = imagenInput.files[0];
-		    if (!imagen) {
-		        alert('Por favor, selecciona una imagen.');
-		        return;
-		    }
-		    console.log('Archivo de imagen seleccionado: ' + imagen.name); // Depuración
-		    formData.append('imagen', imagen);
+            const formData = new FormData();
+            const imagenInput = document.getElementById('imagen');
+            const imagen = imagenInput.files[0];
+            if (!imagen) {
+                alert('Por favor, selecciona una imagen.');
+                return;
+            }
+            console.log('Archivo de imagen seleccionado: ' + imagen.name); // Depuración
+            formData.append('imagen', imagen);
 
-		    const nombreEvento = document.getElementById('nombreEvento').value;
-		    const fecha = document.getElementById('fecha').value;
-		    const invitados = Array.from(document.querySelectorAll('.invitado-select')).map(select => select.value);
-		    const cantidadSillas = parseInt(document.getElementById('cantidadSillas').value);
-		    const proveedores = {
-		        "Sonido e Iluminación": document.getElementById('proveedorSonidoeIluminación').value,
-		        "Decoración": document.getElementById('proveedorDecoración').value,
-		        "Logística": document.getElementById('proveedorLogística').value,
-		        "Servicio Personal": document.getElementById('proveedorServicioPersonal').value,
-		        "Taquillería": document.getElementById('proveedorTaquillería').value,
-		        "Alimentación": document.getElementById('proveedorAlimentación').value,
-		        "Marketing": document.getElementById('proveedorMarketing').value
-		    };
-		    const lugar = document.getElementById('lugar').value;
-		    const hora = document.getElementById('hora').value;
-		    const ciudad = document.getElementById('ciudad').value;
-		    const descripcion = document.getElementById('descripcion').value;
-		    const requisitos = document.getElementById('requisitos').value;
-		    const ubicacionesPrecios = Array.from(document.querySelectorAll('.location-field')).map(field => ({
-		        ubicacion: field.querySelector('.location-name').value,
-		        precio: parseInt(field.querySelector('.location-price').value)
-		    }));
+            const organizadorId = document.getElementById('organizadorId');
+            const organizadorNombre = document.getElementById('organizadorNombre');
+            const nombreEvento = document.getElementById('nombreEvento').value;
+            const fecha = document.getElementById('fecha').value;
+            const invitados = Array.from(document.querySelectorAll('.invitado-select')).map(select => select.value);
+            const cantidadSillas = parseInt(document.getElementById('cantidadSillas').value);
+            
+            // Obtener proveedores con verificación de existencia
+            const proveedores = {};
+            const proveedorFields = [
+                { key: "Sonido e Iluminación", id: "proveedorSonidoeIluminación" },
+                { key: "Decoración", id: "proveedorDecoración" },
+                { key: "Logística", id: "proveedorLogística" },
+                { key: "Servicio Personal", id: "proveedorServicioPersonal" },
+                { key: "Taquillería", id: "proveedorTaquillería" },
+                { key: "Alimentación", id: "proveedorAlimentación" },
+                { key: "Marketing", id: "proveedorMarketing" }
+            ];
 
-		    if (!nombreEvento || !fecha || !invitados.length || !cantidadSillas || !lugar || !hora || !ciudad || !descripcion || !requisitos || !ubicacionesPrecios.length) {
-		        alert('Por favor, completa todos los campos, incluyendo al menos una ubicación y precio.');
-		        return;
-		    }
+            proveedorFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    proveedores[field.key] = element.value;
+                } else {
+                    console.warn(`Elemento con ID ${field.id} no encontrado`);
+                    proveedores[field.key] = '';
+                }
+            });
 
-		    const eventData = {
-		        nombreEvento,
-		        fecha,
-		        invitados,
-		        cantidadSillas,
-		        proveedores,
-		        lugar,
-		        hora,
-		        ciudad,
-		        descripcion,
-		        requisitos,
-		        ubicacionesPrecios
-		    };
+            const lugar = document.getElementById('lugar').value;
+            const hora = document.getElementById('hora').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const requisitos = document.getElementById('requisitos').value;
+            const ubicacionesPrecios = Array.from(document.querySelectorAll('.location-field')).map(field => ({
+                ubicacion: field.querySelector('.location-name').value,
+                precio: parseInt(field.querySelector('.location-price').value)
+            }));
 
-		    formData.append('eventData', JSON.stringify(eventData));
+            // Validación
+            if (!organizadorId || !organizadorNombre || !nombreEvento || !fecha || !invitados.length || !cantidadSillas || !lugar || !hora || !ciudad || !descripcion || !requisitos || !ubicacionesPrecios.length) {
+                alert('Por favor, completa todos los campos, incluyendo al menos una ubicación y precio.');
+                return;
+            }
 
-		    try {
-		        console.log('Enviando datos al backend...');
-		        const response = await fetch('/rest/organizadores/eventos', {
-		            method: 'POST',
-		            credentials: 'include',
-		            body: formData
-		        });
+            const eventData = {
+                organizadorId: organizadorId.value,
+                organizadorNombre: organizadorNombre.value,
+                nombreEvento,
+                fecha,
+                invitados,
+                cantidadSillas,
+                proveedores,
+                lugar,
+                hora,
+                ciudad,
+                descripcion,
+                requisitos,
+                ubicacionesPrecios
+            };
 
-		        const result = await response.json();
-		        console.log('Respuesta del servidor:', result);
+            formData.append('eventData', JSON.stringify(eventData));
 
-		        if (response.ok) {
-		            alert(result.message || 'Evento creado exitosamente.');
-		            document.getElementById('createEventForm').reset();
-		            const container = document.getElementById('invitadosContainer');
-		            container.innerHTML = `
-		                <div class="invitado-fields">
-		                    <div class="invitado-field">
-		                        <select class="admin-create__input invitado-select" required>
-		                            <option value="" disabled selected>Selecciona un invitado</option>
-		                        </select>
-		                        <button type="button" class="btn btn-danger btn-sm remove-invitado" style="display: none;">X</button>
-		                    </div>
-		                </div>
-		            `;
-		            const locationContainer = document.getElementById('locationsContainer');
-		            locationContainer.innerHTML = `
-		                <div class="location-fields">
-		                    <div class="location-field">
-		                        <input type="text" class="admin-create__input location-name" placeholder="Nombre de la ubicación" required>
-		                        <input type="number" class="admin-create__input location-price" placeholder="Precio ($)" required>
-		                        <button type="button" class="btn btn-danger btn-sm remove-location" style="display: none;">X</button>
-		                    </div>
-		                </div>
-		            `;
-		            document.getElementById('image-preview').style.display = 'none';
-		            await loadInvitados();
-		        } else {
-		            alert(result.message || 'Error al crear el evento.');
-		        }
-		    } catch (error) {
-		        console.error('Error al enviar la solicitud:', error);
-		        alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
-		    }
-		});
+            try {
+                console.log('Enviando datos al backend...');
+                const response = await fetch('/rest/organizadores/eventos', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
 
-        document.getElementById('imagen').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('image-preview');
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.style.display = 'none';
+                const result = await response.json();
+                console.log('Respuesta del servidor:', result);
+
+                if (response.ok) {
+                    alert(result.message || 'Evento creado exitosamente.');
+                    document.getElementById('createEventForm').reset();
+                    const container = document.getElementById('invitadosContainer');
+                    container.innerHTML = `
+                        <div class="invitado-fields">
+                            <div class="invitado-field">
+                                <select class="admin-create__input invitado-select" required>
+                                    <option value="" disabled selected>Selecciona un invitado</option>
+                                </select>
+                                <button type="button" class="btn btn-danger btn-sm remove-invitado" style="display: none;">X</button>
+                            </div>
+                        </div>
+                    `;
+                    const locationContainer = document.getElementById('locationsContainer');
+                    locationContainer.innerHTML = `
+                        <div class="location-fields">
+                            <div class="location-field">
+                                <input type="text" class="admin-create__input location-name" placeholder="Nombre de la ubicación" required>
+                                <input type="number" class="admin-create__input location-price" placeholder="Precio ($)" required>
+                                <button type="button" class="btn btn-danger btn-sm remove-location" style="display: none;">X</button>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('imagen').value = ''; // Limpiar el campo de archivo
+                    await loadInvitados();
+                } else {
+                    alert(result.message || 'Error al crear el evento.');
+                }
+            } catch (error) {
+                console.error('Error al enviar la solicitud:', error);
+                alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
             }
         });
 
