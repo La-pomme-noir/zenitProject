@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const card = document.createElement('div');
                 card.className = 'evento__card-unit';
                 card.innerHTML = `
-                    <img src="${evento.imagenUrl || './img/eventos/default.jpg'}" alt="${evento.nombreEvento}">
+                    <img src="${evento.imagenUrl || './uploads/default.jpg'}" alt="${evento.nombreEvento}">
                     <h3 class="evento__card-title">${evento.nombreEvento}</h3>
                     <p class="evento__card-parrafo">${evento.lugar}, ${evento.ciudad}</p>
                     <p class="evento__card-aforo"><strong>Aforo:</strong> ${evento.aforo}</p>
