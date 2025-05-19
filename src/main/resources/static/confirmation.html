@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Confirmado - Zenit Eventos</title>
+    <link rel="stylesheet" href="./css/formPaypal.css">
+</head>
+<body>
+    <div class="confirmation-alert">
+        <div class="confirmation-alert__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <h1 class="confirmation-alert__title">¡Pago Confirmado!</h1>
+        <p class="confirmation-alert__message">
+            Gracias por tu compra. Tu pago ha sido procesado exitosamente.
+        </p>
+        <p class="confirmation-alert__redirect">
+            Serás redirigido a tu calendario en <span class="confirmation-alert__timer">5</span> segundos...
+        </p>
+    </div>
+
+    <script>
+        let timeLeft = 5;
+        const timerElement = document.querySelector('.confirmation-alert__timer');
+        
+        const countdown = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                window.location.href = '/clienteEventos.html';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

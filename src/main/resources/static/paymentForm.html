@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Formulario de Pago - Zenit Eventos</title>
+	<link rel="stylesheet" href="./css/formPaypal.css">
+</head>
+
+<body>
+	<header class="header">
+		<div class="header__logo">
+			<a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+			<span class="header__title">Zenit Eventos</span>
+			<nav class="header__navbar">
+				<i class="fa-solid fa-left-long"></i>
+				<a href="clienteMoreEventos.html" class="navbar__links navbar__links--activo">
+					Regresar</a>
+			</nav>
+		</div> <!--Fin header__logo-->
+	</header> <!--Fin Header-->
+
+	<section class="payment-section">
+		<div class="payment-container">
+			<h2 class="payment-title">Confirmar Pago</h2>
+			<p class="payment-parrafo"><strong class="payment-strong">Ubicación:</strong> <span class="payment-span"
+					id="ubicacion"></span></p>
+			<p class="payment-parrafo"><strong class="payment-strong">Precio: $</strong> <span class="payment-span"
+					id="precio"></span></p>
+			<div id="paypal-button-container"></div>
+		</div>
+	</section>
+
+	<script
+		src="https://www.paypal.com/sdk/js?client-id=AcrOM79YiYMPVdH2Hy-PHkB1FDQQ9hdFAtdvMrXv8v837HWSSueTluNBMwbKTvgLn8nKx6qULLyyWzw3&currency=USD"></script>
+	<script>
+		// Extraer parámetros de la URL
+		const urlParams = new URLSearchParams(window.location.search);
+		const ubicacion = urlParams.get('ubicacion') || 'No especificada';
+		const precio = parseFloat(urlParams.get('precio')) || 0;
+		const eventoId = urlParams.get('eventoId');
+
+		// Mostrar la ubicación y el precio en la página
+		document.getElementById('ubicacion').textContent = ubicacion;
+		document.getElementById('precio').textContent = precio.toFixed(2);
+
+		// Configurar el botón de PayPal
+		paypal.Buttons({
+			createOrder: function (data, actions) {
+				return actions.order.create({
+					purchase_units: [{
+						amount: {
+							value: precio.toFixed(2),
+							currency_code: 'USD'
+						},
+						description: `Pago por boleta - Ubicación: ${ubicacion}`
+					}]
+				});
+			},
+			onApprove: async function (data, actions) {
+				try {
+					// Capturar el pago
+					const details = await actions.order.capture();
+
+					// Registrar la asistencia al evento
+					const registerResponse = await fetch('/api/clientes/register-event', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify({eventoId: eventoId}),
+						credentials: 'include'
+					});
+
+					const registerData = await registerResponse.json();
+					if (!registerResponse.ok) {
+						throw new Error(registerData.message || 'Error al registrar la asistencia.');
+					}
+
+					alert('Pago completado con éxito por ' + details.payer.name.given_name + '!');
+					window.location.href = '/confirmation.html';
+				} catch (error) {
+					console.error('Error durante el pago o registro:', error);
+					alert('Ocurrió un error: ' + error.message);
+				}
+			},
+			onError: function (err) {
+				console.error('Error durante el pago:', err);
+				alert('Ocurrió un error al procesar el pago. Por favor, intenta de nuevo.');
+			}
+		}).render('#paypal-button-container');
+	</script>
+	<script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+</body>
+
+</html>

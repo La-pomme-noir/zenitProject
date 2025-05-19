@@ -1,0 +1,204 @@
+@import url(global.css);
+@import url(normalize.css);
+
+.auth-alert {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.auth-alert__content {
+	background-color: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	text-align: center;
+	max-width: 400px;
+	width: 90%;
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+.auth-alert__icon {
+	width: 50px;
+	height: 50px;
+	background-color: #f39c12;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 15px;
+}
+
+.auth-alert__icon svg {
+	width: 30px;
+	height: 30px;
+	color: white;
+}
+
+.auth-alert__title {
+	font-size: 20px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.auth-alert__message {
+	font-size: 14px;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+.auth-alert__buttons {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.auth-alert__button {
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+	transition: background-color 0.3s;
+}
+
+.auth-alert__button--login {
+	background-color: #007bff;
+	color: white;
+}
+
+.auth-alert__button--login:hover {
+	background-color: #0056b3;
+	color: var(--negro);
+}
+
+.auth-alert__button--register {
+	background-color: #28a745;
+	color: white;
+}
+
+.auth-alert__button--register:hover {
+	background-color: #218838;
+	color: var(--negro);
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/*CANCELAR DISEÑO*/
+.cancel-alert {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+}
+
+.cancel-alert__content {
+	background-color: white;
+	padding: 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+	text-align: center;
+	max-width: 400px;
+	width: 90%;
+	animation: fadeIn 0.3s ease-in-out;
+}
+
+.cancel-alert__icon {
+	width: 50px;
+	height: 50px;
+	background-color: #dc3545;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 15px;
+}
+
+.cancel-alert__icon svg {
+	width: 30px;
+	height: 30px;
+	color: white;
+}
+
+.cancel-alert__title {
+	font-size: 20px;
+	font-weight: 700;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.cancel-alert__message {
+	font-size: 14px;
+	color: #666;
+	margin-bottom: 20px;
+}
+
+.cancel-alert__buttons {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+}
+
+.cancel-alert__button {
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: none;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.cancel-alert__button--confirm {
+	background-color: #dc3545;
+	color: white;
+}
+
+.cancel-alert__button--confirm:hover {
+	background-color: #c82333;
+}
+
+.cancel-alert__button--cancel {
+	background-color: #6c757d;
+	color: white;
+}
+
+.cancel-alert__button--cancel:hover {
+	background-color: #5a6268;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

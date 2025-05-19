@@ -3,11 +3,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const pageSize = 9;
     let searchQuery = '';
 
+    // Función para mostrar una alerta estilizada
+    function showAuthAlert() {
+        // Crear el contenedor de la alerta
+        const alertContainer = document.createElement('div');
+        alertContainer.className = 'auth-alert';
+        alertContainer.innerHTML = `
+            <div class="auth-alert__content">
+                <div class="auth-alert__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h3 class="auth-alert__title">Debes Iniciar Sesión</h3>
+                <p class="auth-alert__message">Para comprar una entrada, necesitas estar registrado como cliente. Por favor, inicia sesión o regístrate.</p>
+                <div class="auth-alert__buttons">
+                    <a href="/login.html" class="auth-alert__button auth-alert__button--login">Iniciar Sesión</a>
+                    <a href="/register.html" class="auth-alert__button auth-alert__button--register">Registrarse</a>
+                </div>
+            </div>
+        `;
+
+        // Añadir la alerta al cuerpo
+        document.body.appendChild(alertContainer);
+
+        // Cerrar la alerta al hacer clic fuera de ella
+        alertContainer.addEventListener('click', (e) => {
+            if (e.target === alertContainer) {
+                document.body.removeChild(alertContainer);
+            }
+        });
+    }
+
     // Fetch events from the API
     const fetchEvents = async (page, search = '') => {
         try {
             const url = `/rest/organizadores/public/eventos?page=${page}&size=${pageSize}${search ? `&search=${encodeURIComponent(search)}` : ''}`;
-            console.log('Fetching events from:', url); // Debug
+            console.log('Fetching events from:', url);
             const response = await fetch(url);
             
             if (!response.ok) {
@@ -15,10 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            console.log('API response:', data); // Debug
+            console.log('API response:', data);
 
             const eventosContainer = document.getElementById('eventos-container');
-            eventosContainer.innerHTML = ''; // Clear existing cards
+            eventosContainer.innerHTML = '';
 
             if (data.eventos.length === 0) {
                 eventosContainer.innerHTML = '<p>No se encontraron eventos.</p>';
@@ -28,8 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
             data.eventos.forEach(evento => {
                 const card = document.createElement('div');
                 card.className = 'evento__card-unit';
+                // Determinar si el aforo es 0 para mostrar "No disponible" o el botón "Obtener Entradas"
+                const isAforoAgotado = evento.aforo <= 0;
                 card.innerHTML = `
-                    <img src="${evento.imagenUrl || './uploads/default.jpg'}" alt="${evento.nombreEvento}">
+                    <img src="${evento.imagenUrl || '/img/eventos/default.jpg'}" alt="${evento.nombreEvento}">
                     <h3 class="evento__card-title">${evento.nombreEvento}</h3>
                     <p class="evento__card-parrafo">${evento.lugar}, ${evento.ciudad}</p>
                     <p class="evento__card-aforo"><strong>Aforo:</strong> ${evento.aforo}</p>
@@ -41,7 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <p><strong>Requisitos:</strong> ${evento.requisitos}</p>
                         <p><strong>Organizador:</strong> ${evento.organizadorNombre}</p>
                     </div>
-                    <button class="global__button" data-bs-toggle="modal" data-bs-target="#preciosModal" data-evento='${JSON.stringify(evento)}'>Obtener Entradas</button>
+                    ${isAforoAgotado 
+                        ? '<p class="evento__no-disponible">No disponible</p>' 
+                        : `<button class="global__button" data-bs-toggle="modal" data-bs-target="#preciosModal" data-evento='${JSON.stringify(evento)}'>Obtener Entradas</button>`
+                    }
                 `;
                 eventosContainer.appendChild(card);
             });
@@ -69,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Add event listeners for "Obtener Entradas" buttons
+            // Add event listeners for "Obtener Entradas" buttons (solo para los eventos con aforo disponible)
             document.querySelectorAll('.global__button').forEach(button => {
                 button.addEventListener('click', () => {
                     const evento = JSON.parse(button.getAttribute('data-evento'));
@@ -90,12 +127,29 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         </ul>
                     `;
-                    // Add event listeners for "Comprar" buttons (placeholder for PayPal integration)
+                    // Add event listeners for "Comprar" buttons
                     document.querySelectorAll('.comprar-entrada').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            const ubicacion = btn.getAttribute('data-ubicacion');
-                            const precio = btn.getAttribute('data-precio');
-                            alert(`Iniciando compra para ${ubicacion} a $${precio}. (Integración con PayPal pendiente)`);
+                        btn.addEventListener('click', async () => {
+                            // Verificar autenticación
+                            try {
+                                const authResponse = await fetch('/api/clientes/auth-status', {
+                                    credentials: 'include'
+                                });
+                                const authData = await authResponse.json();
+
+                                if (!authData.isAuthenticated || authData.role !== 'CLIENTE') {
+                                    showAuthAlert();
+                                    return;
+                                }
+
+                                // Si está autenticado y es cliente, proceder a la compra
+                                const ubicacion = btn.getAttribute('data-ubicacion');
+                                const precio = btn.getAttribute('data-precio');
+                                window.location.href = `/paymentForm.html?ubicacion=${encodeURIComponent(ubicacion)}&precio=${encodeURIComponent(precio)}&eventoId=${evento.id}`;
+                            } catch (error) {
+                                console.error('Error al verificar autenticación:', error);
+                                showAuthAlert();
+                            }
                         });
                     });
                 });
@@ -127,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', () => {
         searchQuery = searchInput.value.trim();
-        currentPage = 0; // Reset to first page on search
+        currentPage = 0;
         fetchEvents(currentPage, searchQuery);
     });
 });

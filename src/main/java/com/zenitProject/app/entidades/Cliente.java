@@ -1,5 +1,8 @@
 package com.zenitProject.app.entidades;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,6 +26,9 @@ public class Cliente {
     
     @Field("role")
     private String role = "CLIENTE";
+    
+    @Field("eventosRegistrados")
+    private List<String> eventosRegistrados = new ArrayList<>();
 
 	public String getId() {
 		return id;
@@ -63,4 +69,13 @@ public class Cliente {
 	public void setRole(String role) {
 		this.role = role;
 	}
+
+	public List<String> getEventosRegistrados() {
+		return eventosRegistrados;
+	}
+
+	public void setEventosRegistrados(List<String> eventosRegistrados) {
+		this.eventosRegistrados = eventosRegistrados;
+	}
+	
 }

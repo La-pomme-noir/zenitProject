@@ -43,6 +43,14 @@
     position: relative;
     z-index: 2;
 }
+.evento__no-disponible {
+    color: var(--rojo);
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.6rem;
+	margin: 1rem;
+}
+/*OVERLAY*/
 .evento__overlay {
     display: none;
     position: absolute;
@@ -71,6 +79,7 @@
     cursor: pointer;
     font-size: 1.5rem;
 }
+/*SEARCH*/
 .pagination {
     display: flex;
     justify-content: center;
@@ -89,6 +98,7 @@
     border-radius: .5rem;
     padding: .75rem;
 }
+/*MODAL*/
 .modal-precios {
 	background-color: var(--negro);
 }
