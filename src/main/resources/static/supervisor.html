@@ -12,9 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
-	<link rel="stylesheet" href="./css/invitado.css">
-
-	<title>Zénit Eventos Supervisor</title>
+    <link rel="stylesheet" href="./css/invitado.css">
+    <title>Zénit Eventos Supervisor</title>
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -31,6 +30,10 @@
             align-items: center;
             justify-content: space-between;
         }
+        .header__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
         .header__navbar a {
             color: white;
             margin: 0 1rem;
@@ -45,51 +48,126 @@
             margin: 2rem auto;
             padding: 0 15px;
         }
-        .card {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+        .supervisor {
+            margin-bottom: 3rem;
         }
-        .btn-primary {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            margin-right: 0.5rem;
-        }
-        .btn-primary:hover {
-            background-color: #009688;
-            border-color: #009688;
-        }
-        .btn-success, .btn-danger, .btn-warning {
-            border-radius: 20px;
-            padding: 0.3rem 1rem;
-        }
-        .table {
-            background-color: #3A4445;
-            color: white;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-            border-color: #4A5556;
-        }
-        .form-control {
-            background-color: #FFFFFF;
-            border-radius: 5px;
-            color: #333;
-        }
-        .form-label {
-            font-weight: 600;
-        }
-        h2 {
+        .title__sections {
             font-size: 1.5rem;
             text-transform: uppercase;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
-        h3 {
+        .supervisor-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .supervisor-content__cards {
+            background-color: #3A4445;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .supervisor-content__cards:hover {
+            transform: translateY(-5px);
+        }
+        .supervisor-content__cards img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .supervisor-content__title {
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
+        }
+        .supervisor-content__parrafo {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: #B0B0B0;
+        }
+        .global__button {
+            background-color: #00C4B4;
+            border-color: #00C4B4;
+            border-radius: 20px;
+            padding: 0.5rem 2rem;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .global__button:hover {
+            background-color: #009688;
+            border-color: #009688;
+            color: white;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-content {
+            padding: 1rem;
+        }
+        /* Estilos mejorados para la tabla de Gestión de Eventos */
+        .eventos-card {
+            max-width: 1000px;
+        }
+        .eventos-table-container {
+            background-color: #2A3435;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        .table {
+            background-color: transparent;
+            color: white;
+            margin-bottom: 0;
+        }
+        .table thead {
+            background-color: #1C2526;
+        }
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+            border: none;
+        }
+        .table td {
+            vertical-align: middle;
+            padding: 0.75rem;
+            border-top: 1px solid #4A5556;
+            font-size: 0.85rem;
+        }
+        .table tbody tr:hover {
+            background-color: #3A4445;
+        }
+        .btn-success {
+            background-color: #28A745;
+            border-color: #28A745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        .btn-danger {
+            background-color: #DC3545;
+            border-color: #DC3545;
+        }
+        .btn-danger:hover {
+            background-color: #C82333;
+            border-color: #C82333;
+        }
+        .btn-warning {
+            background-color: #FFC107;
+            border-color: #FFC107;
+        }
+        .btn-warning:hover {
+            background-color: #FFCA28;
+            border-color: #FFCA28;
         }
         .list-group-item {
             background-color: #4A5556;
@@ -98,63 +176,121 @@
             border-radius: 5px;
             margin-bottom: 5px;
         }
+        .footer {
+            background-color: #1C2526;
+            padding: 2rem;
+            border-top: 1px solid #3A4445;
+            text-align: center;
+        }
+        .footer__logo {
+            margin-bottom: 1rem;
+        }
+        .footer__logo img {
+            width: 100px;
+        }
+        .footer__social a {
+            color: white;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+        }
+        .footer__social a:hover {
+            color: #00C4B4;
+        }
+        .footer__navbar {
+            margin-top: 1rem;
+        }
+        .footer__links {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        .footer__links:hover {
+            color: #00C4B4;
+        }
     </style>
 </head>
 <body>
-	<header class="header">
-			        <div class="header__logo">
-			            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
-						<span class="header__title">Zenit Eventos</span>
-			            <nav class="header__navbar">
-			                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
-			                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
-			            </nav>
-			        </div> <!--Fin header__logo-->
-			    </header> <!--Fin Header-->
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
 
     <main class="contenedor">
-        <!-- Perfil del Supervisor -->
-        <div class="card">
-            <h2>Perfil del Supervisor</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Sobre Mí</h3>
-                    <p>Soy un supervisor encargado de supervisar y aprobar los eventos de Zénit Eventos. Mi rol es garantizar que todos los eventos cumplan con los estándares establecidos y se ejecuten sin inconvenientes.</p>
+        <div class="supervisor">
+            <h2 class="title__sections">Panel Supervisor</h2>
+            <div class="supervisor-content shadow-card">
+                <!-- Perfil del Supervisor -->
+                <div class="supervisor-content__cards">
+                    <img src="./img/profile.jpg" alt="Perfil Supervisor">
+                    <h3 class="supervisor-content__title">Perfil del Supervisor</h3>
+                    <p class="supervisor-content__parrafo">Consulta y edita la información de tu perfil como supervisor.</p>
+                    <div class="card-content">
+                        <h4>Sobre Mí</h4>
+                        <p>Soy un supervisor encargado de supervisar y aprobar los eventos de Zénit Eventos. Mi rol es garantizar que todos los eventos cumplan con los estándares establecidos y se ejecuten sin inconvenientes.</p>
+                        <h4>Información</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item">Nombre: Esteban Supervisor</li>
+                            <li class="list-group-item">Rol: Supervisor</li>
+                            <li class="list-group-item">Correo: Esteban@gmail.com</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h3>Información</h3>
-                    <ul class="list-group">
-                        <li class="list-group-item">Nombre: Esteban Supervisor</li>
-                        <li class="list-group-item">Rol: Supervisor</li>
-                        <li class="list-group-item">Correo: Esteban@gmail.com</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Lista de Eventos -->
-        <div class="card">
-            <h2>Gestión de Eventos</h2>
-            <div class="mb-3">
-                <button id="filterPending" class="btn btn-warning">Pendientes</button>
-                <button id="filterApproved" class="btn btn-success">Aprobados</button>
-                <button id="filterDisapproved" class="btn btn-danger">Desaprobados</button>
-                <button id="filterAll" class="btn btn-primary">Todos</button>
+                <!-- Gestión de Eventos -->
+                <div class="supervisor-content__cards eventos-card">
+                    <img src="./img/admin-listEvents.jpg" alt="Gestión de Eventos">
+                    <h3 class="supervisor-content__title">Gestión de Eventos</h3>
+                    <p class="supervisor-content__parrafo">Revisa y gestiona los eventos asignados.</p>
+                    <div class="card-content">
+                        <div class="mb-3">
+                            <button id="filterPending" class="btn btn-warning">Pendientes</button>
+                            <button id="filterApproved" class="btn btn-success">Aprobados</button>
+                            <button id="filterDisapproved" class="btn btn-danger">Desaprobados</button>
+                            <button id="filterAll" class="btn btn-primary">Todos</button>
+                        </div>
+                        <div class="eventos-table-container">
+                            <table class="table" id="eventsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Fecha</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <table class="table table-striped" id="eventsTable">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="eventsBody">
-                </tbody>
-            </table>
         </div>
     </main>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y condiciones</a>
+            <a href="#" class="footer__links">Política de cookies</a>
+        </nav>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
@@ -188,7 +324,7 @@
                     });
 
                 if (filteredEvents.length === 0) {
-                    eventsBody.innerHTML = '<tr><td colspan="4">No hay eventos para mostrar.</td></tr>';
+                    eventsBody.innerHTML = '<tr><td colspan="4" class="text-center">No hay eventos para mostrar.</td></tr>';
                     return;
                 }
 
@@ -279,3 +415,5 @@
             loadEvents('all');
         };
     </script>
+</body>
+</html>
