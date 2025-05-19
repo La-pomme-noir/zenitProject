@@ -10,9 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="./css/invitado.css">
-
-	<title>Zénit Eventos Proveedor</title>
+    <link rel="stylesheet" href="./css/admin.css">
+    <title>Zénit Eventos Proveedor</title>
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
@@ -29,6 +28,10 @@
             align-items: center;
             justify-content: space-between;
         }
+        .header__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
         .header__navbar a {
             color: white;
             margin: 0 1rem;
@@ -43,33 +46,68 @@
             margin: 2rem auto;
             padding: 0 15px;
         }
-        .card {
+        .proveedor {
+            margin-bottom: 3rem;
+        }
+        .title__sections {
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .proveedor-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .proveedor-content__cards {
             background-color: #3A4445;
             border-radius: 10px;
             padding: 2rem;
-            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 350px;
+            text-align: center;
+            transition: transform 0.3s;
         }
-        .btn-primary {
+        .proveedor-content__cards:hover {
+            transform: translateY(-5px);
+        }
+        .proveedor-content__cards img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .proveedor-content__title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .proveedor-content__parrafo {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: #B0B0B0;
+        }
+        .global__button {
             background-color: #00C4B4;
             border-color: #00C4B4;
             border-radius: 20px;
             padding: 0.5rem 2rem;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
         }
-        .btn-primary:hover {
+        .global__button:hover {
             background-color: #009688;
             border-color: #009688;
-        }
-        .btn-success, .btn-danger {
-            border-radius: 20px;
-            padding: 0.3rem 1rem;
-        }
-        .table {
-            background-color: #3A4445;
             color: white;
         }
-        .table th, .table td {
-            vertical-align: middle;
-            border-color: #4A5556;
+        .shadow-card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .card-content {
+            padding: 1rem;
         }
         .form-control {
             background-color: #FFFFFF;
@@ -79,10 +117,60 @@
         .form-label {
             font-weight: 600;
         }
-        h2 {
-            font-size: 1.5rem;
+        /* Estilos mejorados para la tabla de Eventos Asignados */
+        .eventos-card {
+            max-width: 1000px; /* Aumentamos el ancho para la tabla */
+        }
+        .eventos-table-container {
+            background-color: #2A3435;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+        .table {
+            background-color: transparent;
+            color: white;
+            margin-bottom: 0;
+        }
+        .table thead {
+            background-color: #1C2526;
+        }
+        .table th {
+            font-weight: 600;
             text-transform: uppercase;
-            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            padding: 0.75rem;
+            border: none;
+        }
+        .table td {
+            vertical-align: middle;
+            padding: 0.75rem;
+            border-top: 1px solid #4A5556;
+            font-size: 0.85rem;
+        }
+        .table tbody tr:hover {
+            background-color: #3A4445;
+        }
+        .btn-success, .btn-danger {
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+            font-size: 0.8rem;
+        }
+        .btn-success {
+            background-color: #28A745;
+            border-color: #28A745;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        .btn-danger {
+            background-color: #DC3545;
+            border-color: #DC3545;
+        }
+        .btn-danger:hover {
+            background-color: #C82333;
+            border-color: #C82333;
         }
         .list-group-item {
             background-color: #4A5556;
@@ -98,84 +186,138 @@
             font-size: 1.2rem;
             margin-bottom: 0.5rem;
         }
+        .footer {
+            background-color: #1C2526;
+            padding: 2rem;
+            border-top: 1px solid #3A4445;
+            text-align: center;
+        }
+        .footer__logo {
+            margin-bottom: 1rem;
+        }
+        .footer__logo img {
+            width: 100px;
+        }
+        .footer__social a {
+            color: white;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+        }
+        .footer__social a:hover {
+            color: #00C4B4;
+        }
+        .footer__navbar {
+            margin-top: 1rem;
+        }
+        .footer__links {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        .footer__links:hover {
+            color: #00C4B4;
+        }
     </style>
 </head>
 <body>
-	<header class="header">
-		        <div class="header__logo">
-		            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
-					<span class="header__title">Zenit Eventos</span>
-		            <nav class="header__navbar">
-		                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Proveedor</a>
-		                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
-		            </nav>
-		        </div> <!--Fin header__logo-->
-		    </header> <!--Fin Header-->
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
 
     <main class="contenedor">
-        <!-- Perfil del Proveedor -->
-        <div class="card">
-            <h2>Perfil del Proveedor</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Sobre Mí</h3>
-                    <p>Soy un proveedor especializado en crear experiencias únicas para eventos.
-						Con más de 5 años de experiencia, me dedico a ofrecer servicios personalizados 
-						que hacen de cada evento algo inolvidable. Mi enfoque está en la calidad, 
-						la puntualidad y la satisfacción del cliente.</p>
+        <div class="proveedor">
+            <h2 class="title__sections">Panel Proveedor</h2>
+            <div class="proveedor-content shadow-card">
+                <!-- Perfil del Proveedor -->
+                <div class="proveedor-content__cards">
+                    <img src="./img/profile.jpg" alt="Perfil Proveedor">
+                    <h3 class="proveedor-content__title">Perfil del Proveedor</h3>
+                    <p class="proveedor-content__parrafo">Consulta y edita la información de tu perfil como proveedor.</p>
+                    <div class="card-content">
+                        <h4>Sobre Mí</h4>
+                        <p id="sobreMi">Soy un proveedor para eventos con 2 años de experiencia
+							y estamos dispuetas a brindarte el mejor de los servicios
+						</p>
+                        <h4>Eventos Realizados</h4>
+                        <ul id="eventosRealizadosList" class="list-group">
+                            <li class="list-group-item">Cargando...</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <h3>Eventos Realizados</h3>
-                    <ul id="eventosRealizadosList" class="list-group">
-                    </ul>
-                </div>
-            </div>
-        </div>
 
-        <!-- Gestión de Categorías y Servicios -->
-        <div class="card">
-            <h2>Mis Categorías y Servicios</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <h3>Agregar Servicio</h3>
-                    <form id="servicioForm">
-                        <div class="mb-3">
-                            <label for="categoria" class="form-label">Categoría</label>
-                            <input type="text" class="form-control" id="categoria" placeholder="Ej. Iluminaciones" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="servicio" class="form-label">Servicio</label>
-                            <input type="text" class="form-control" id="servicio" placeholder="Ej. Luces LED" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Agregar</button>
-                    </form>
+                <!-- Gestión de Categorías y Servicios -->
+                <div class="proveedor-content__cards">
+                    <img src="./img/admin-listEvents.jpg" alt="Servicios">
+                    <h3 class="proveedor-content__title">Gestionar Servicios</h3>
+                    <p class="proveedor-content__parrafo">Administra las categorías y servicios que ofreces.</p>
+                    <div class="card-content">
+                        <form id="servicioForm">
+                            <div class="mb-3">
+                                <label for="categoria" class="form-label">Categoría</label>
+                                <input type="text" class="form-control" id="categoria" placeholder="Ej. Iluminaciones" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="servicio" class="form-label">Servicio</label>
+                                <input type="text" class="form-control" id="servicio" placeholder="Ej. Luces LED" required>
+                            </div>
+                            <button type="submit" class="global__button">Agregar</button>
+                        </form>
+                        <h4>Servicios Ofrecidos</h4>
+                        <div id="serviciosList"></div>
+                    </div>
                 </div>
-                <div class="col-md-8">
-                    <h3>Servicios Ofrecidos</h3>
-                    <div id="serviciosList">
+
+                <!-- Eventos Asignados (Mejorado) -->
+                <div class="proveedor-content__cards eventos-card">
+                    <img src="./img/admin-listEvents.jpg" alt="Eventos Asignados">
+                    <h3 class="proveedor-content__title">Eventos Asignados</h3>
+                    <p class="proveedor-content__parrafo">Revisa los eventos asignados y gestiona tu participación.</p>
+                    <div class="card-content">
+                        <div class="eventos-table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Fecha</th>
+                                        <th>Servicios</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventosTable"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Eventos Asignados -->
-        <div class="card">
-            <h2>Eventos Asignados</h2>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Fecha</th>
-                        <th>Servicios Solicitados</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="eventosTable">
-                </tbody>
-            </table>
-        </div>
     </main>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y condiciones</a>
+            <a href="#" class="footer__links">Política de cookies</a>
+        </nav>
+    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
@@ -190,7 +332,9 @@
             try {
                 const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}`);
                 const proveedor = await response.json();
+                const sobreMi = document.getElementById('sobreMi');
                 const eventosRealizadosList = document.getElementById('eventosRealizadosList');
+                sobreMi.textContent = proveedor.descripcion || 'Soy un proveedor especializado en crear experiencias únicas para eventos.';
                 eventosRealizadosList.innerHTML = '';
 
                 if (proveedor.eventosRealizados && proveedor.eventosRealizados.length > 0) {
@@ -228,7 +372,7 @@
                             </ul>
                         `;
                         serviciosList.appendChild(div);
-                    }
+                    });
                 } else {
                     serviciosList.innerHTML = '<p>No hay servicios registrados</p>';
                 }
@@ -271,6 +415,11 @@
                 const eventos = await response.json();
                 const tableBody = document.getElementById('eventosTable');
                 tableBody.innerHTML = '';
+
+                if (eventos.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No hay eventos asignados</td></tr>';
+                    return;
+                }
 
                 eventos.forEach(evento => {
                     const estado = evento.proveedores[PROVEEDOR_CORREO];
