@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Ver eventos aceptados en Zénit Eventos"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/invitado.css">
+    <title>Zénit Eventos - Eventos Aceptados</title>
+    <style>
+        .event-card {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            padding: 15px;
+            transition: transform 0.2s;
+			color: #000000; /* Cambiado a negro para el texto dentro de la tarjeta */
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+        .event-image {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .no-image {
+            text-align: center;
+            color: #666;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/invitado.html" class="navbar__links">Panel Invitado</a>
+                <a href="/acceptedEvents.html" class="navbar__links navbar__links--activo">Eventos Aceptados</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="admin">
+            <h2 class="title__sections">Eventos Aceptados</h2>
+            <div class="admin-list shadow-card">
+                <div class="row" id="acceptedEventsContainer"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y Condiciones</a>
+            <a href="#" class="footer__links">Política de Cookies</a>
+        </nav>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        let currentInvitado = null;
+
+        async function loadCurrentInvitado() {
+            try {
+                const response = await fetch('/rest/auth/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Error al obtener datos del invitado');
+                }
+                currentInvitado = await response.json();
+                return currentInvitado;
+            } catch (error) {
+                console.error('Error al cargar invitado:', error);
+                throw new Error(error.message);
+            }
+        }
+
+        async function loadAcceptedEvents() {
+            const acceptedEventsContainer = document.getElementById('acceptedEventsContainer');
+            acceptedEventsContainer.innerHTML = '';
+
+            try {
+                const invitado = await loadCurrentInvitado();
+                if (!invitado || !invitado.eventosAsistidos || invitado.eventosAsistidos.length === 0) {
+                    acceptedEventsContainer.innerHTML = '<p class="text-center">No tienes eventos aceptados.</p>';
+                    return;
+                }
+
+                for (const eventoId of invitado.eventosAsistidos) {
+                    const response = await fetch(`/rest/organizadores/public/eventos/${eventoId}`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+                    if (!response.ok) {
+                        console.error(`Error al obtener evento ${eventoId}: ${response.statusText}`);
+                        continue;
+                    }
+                    const event = await response.json();
+
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-4', 'event-card');
+                    let imageContent = event.imagenUrl && event.imagenUrl.trim() !== ''
+                        ? `<img src="${event.imagenUrl}" alt="${event.nombreEvento || 'Imagen del evento'}" class="event-image" onerror="this.style.display='none'; this.parentElement.innerHTML='<p class=\\'no-image\\'>No se pudo cargar la imagen</p>';">`
+                        : '<p class="no-image">No posee imagen</p>';
+
+                    card.innerHTML = `
+                        ${imageContent}
+                        <h5>${event.nombreEvento || 'N/A'}</h5>
+                        <p><strong>Fecha:</strong> ${event.fecha || 'N/A'}</p>
+                        <p><strong>Lugar:</strong> ${event.lugar || 'N/A'}</p>
+                        <p><strong>Hora:</strong> ${event.hora || 'N/A'}</p>
+                        <p><strong>Ciudad:</strong> ${event.ciudad || 'N/A'}</p>
+                        <p><strong>Organizador:</strong> ${event.organizadorNombre || 'N/A'}</p>
+                        <p><strong>Descripción:</strong> ${event.descripcion || 'N/A'}</p>
+                        <p><strong>Requisitos:</strong> ${event.requisitos || 'N/A'}</p>
+                        <p><strong>Estado:</strong> ${event.estadoAprobacion || 'N/A'}</p>
+                    `;
+                    acceptedEventsContainer.appendChild(card);
+                }
+
+            } catch (error) {
+                console.error('Error al cargar eventos aceptados:', error);
+                acceptedEventsContainer.innerHTML = '<p class="text-center">Error al cargar eventos aceptados: ' + error.message + '</p>';
+            }
+        }
+
+        window.onload = () => {
+            loadAcceptedEvents();
+        };
+    </script>
+</body>
+</html>

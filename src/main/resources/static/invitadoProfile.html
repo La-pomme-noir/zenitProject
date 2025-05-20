@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Perfil del Invitado en Zénit Eventos"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/admin.css">
+    <title>Zénit Eventos - Perfil Invitado</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/invitado.html" class="navbar__links navbar__links--activo">Panel Invitado</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="admin">
+            <h2 class="title__sections">Perfil Invitado</h2>
+            <div class="admin-create shadow-card">
+                <h3 class="admin-create__title">
+                    Perfil del Invitado
+                </h3>
+
+                <img class="admin-profile__img" src="./img/perfil.png" alt="Icon Profile">
+
+                <label for="invitadoNombre" class="admin-create__label">Nombre Completo <i class="fa-solid fa-users-rectangle"></i></label>
+                <input type="text" id="invitadoNombre" class="admin-create__input" readonly>
+
+                <label for="invitadoCorreo" class="admin-create__label">Correo Electrónico <i class="fa-solid fa-envelope"></i></label>
+                <input type="email" id="invitadoCorreo" class="admin-create__input" readonly>
+
+                <label for="invitadoEventos" class="admin-create__label">Eventos Asistidos <i class="fa-solid fa-calendar-check"></i></label>
+                <input type="number" id="invitadoEventos" class="admin-create__input" readonly>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y Condiciones</a>
+            <a href="#" class="footer__links">Política de Cookies</a>
+        </nav>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        async function loadInvitadoProfile() {
+            try {
+                const response = await fetch('/rest/auth/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Error al obtener el perfil: ${response.status} - ${response.statusText}`);
+                }
+
+                const profile = await response.json();
+                console.log('Datos recibidos del servidor:', profile);
+
+                // Rellenar los campos con los datos del perfil
+                document.getElementById('invitadoNombre').value = profile.nombre || 'N/A';
+                document.getElementById('invitadoCorreo').value = profile.correo || 'N/A';
+                document.getElementById('invitadoEventos').value = profile.eventosAsistidos ? profile.eventosAsistidos.length : 0;
+
+            } catch (error) {
+                console.error('Error al cargar el perfil del invitado:', error.message);
+                alert('No se pudo cargar el perfil. Detalles: ' + error.message + '\nPor favor, revisa la consola para más información.');
+            }
+        }
+
+        // Cargar el perfil al iniciar la página
+        window.onload = loadInvitadoProfile;
+    </script>
+</body>
+</html>

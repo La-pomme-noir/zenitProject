@@ -1,6 +1,7 @@
 package com.zenitProject.app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenitProject.app.entidades.Evento;
+import com.zenitProject.app.entidades.Invitado;
 import com.zenitProject.app.entidades.Organizador;
 import com.zenitProject.app.repository.EventoRepository;
 import com.zenitProject.app.repository.InvitadoRepository;
@@ -28,7 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.Set;
+import java.util.HashSet;
 
 @RestController
 @RequestMapping("/rest/organizadores")
@@ -42,6 +47,9 @@ public class OrganizadorRestController {
     
     @Autowired
     private Cloudinary cloudinary;
+    
+    @Autowired
+    private InvitadoRepository invitadoRepository;
     
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -90,43 +98,59 @@ public class OrganizadorRestController {
         return ResponseEntity.ok(eventos);
     }
     
-    // Obtener un evento por ID
+    // Obtener un evento por ID (modificado para permitir acceso a invitados)
     @GetMapping("/eventos/{id}")
     public ResponseEntity<Evento> getEventoById(@PathVariable String id, Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).build();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         String correo = authentication.getName();
         Organizador organizador = organizadorRepository.findByCorreo(correo);
-        if (organizador == null) {
-            return ResponseEntity.status(404).build();
+        Invitado invitado = invitadoRepository.findByCorreo(correo);
+
+        Optional<Evento> eventoOpt = eventoRepository.findById(id);
+        if (!eventoOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return eventoRepository.findById(id)
-                .filter(evento -> evento.getOrganizadorId().equals(organizador.getId()))
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(404).build());
+        Evento evento = eventoOpt.get();
+        if (organizador != null && evento.getOrganizadorId() != null && evento.getOrganizadorId().equals(organizador.getId())) {
+            return ResponseEntity.ok(evento);
+        }
+
+        if (invitado != null && evento.getInvitados() != null && evento.getInvitados().contains(invitado.getId())) {
+            return ResponseEntity.ok(evento);
+        }
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
     
-    // Nuevo endpoint para crear un evento
+    // Nuevo endpoint público para obtener un evento por ID
+    @GetMapping("/public/eventos/{id}")
+    public ResponseEntity<Evento> getEventoByIdPublic(@PathVariable String id) {
+        return eventoRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+    
+ // Crear un evento
     @PostMapping(value = "/eventos", consumes = {"multipart/form-data"})
     public ResponseEntity<?> createEvento(
             @RequestPart(value = "eventData", required = true) String eventDataStr,
             @RequestPart(value = "imagen", required = false) MultipartFile imagen,
             Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
         }
 
         String correo = authentication.getName();
         Organizador organizador = organizadorRepository.findByCorreo(correo);
         if (organizador == null) {
-            return ResponseEntity.status(404).body(Map.of("message", "Organizador no encontrado."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Organizador no encontrado."));
         }
 
         try {
-            // Parsear el eventData desde el String JSON
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Object> eventData = objectMapper.readValue(eventDataStr, new TypeReference<Map<String, Object>>() {});
 
@@ -143,28 +167,36 @@ public class OrganizadorRestController {
             evento.setRequisitos((String) eventData.get("requisitos"));
             evento.setEstadoAprobacion("Pendiente");
 
-            // Manejar invitados
             @SuppressWarnings("unchecked")
             List<String> invitados = (List<String>) eventData.get("invitados");
             if (invitados != null) {
                 evento.setInvitados(new ArrayList<>(invitados));
+                // Sincronizar con la lista de invitaciones de los invitados
+                for (String invitadoId : invitados) {
+                    Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                    if (invitado != null) {
+                        List<String> invitaciones = invitado.getInvitaciones();
+                        if (!invitaciones.contains(evento.getId())) {
+                            invitaciones.add(evento.getId());
+                            invitado.setInvitaciones(invitaciones);
+                            invitadoRepository.save(invitado);
+                        }
+                    }
+                }
             }
 
-            // Manejar proveedores
             @SuppressWarnings("unchecked")
             Map<String, String> proveedores = (Map<String, String>) eventData.get("proveedores");
             if (proveedores != null) {
                 evento.setProveedores(new HashMap<>(proveedores));
             }
 
-            // Manejar ubicacionesPrecios
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> ubicacionesPrecios = (List<Map<String, Object>>) eventData.get("ubicacionesPrecios");
             if (ubicacionesPrecios != null) {
                 evento.setUbicacionesPrecios(ubicacionesPrecios);
             }
 
-            // Subir imagen a Cloudinary
             if (imagen != null && !imagen.isEmpty()) {
                 try {
                     Map<String, Object> uploadResult = cloudinary.uploader().upload(imagen.getBytes(), Map.of(
@@ -176,39 +208,111 @@ public class OrganizadorRestController {
                     System.out.println("Imagen subida a Cloudinary con URL: " + imageUrl);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return ResponseEntity.status(500).body(Map.of("message", "Error al subir la imagen a Cloudinary: " + e.getMessage()));
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error al subir la imagen a Cloudinary: " + e.getMessage()));
                 }
             }
 
             Evento savedEvento = eventoRepository.save(evento);
+            // Sincronizar invitaciones después de guardar el evento (porque ahora tenemos el ID)
+            if (invitados != null) {
+                for (String invitadoId : invitados) {
+                    Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                    if (invitado != null) {
+                        List<String> invitaciones = invitado.getInvitaciones();
+                        if (!invitaciones.contains(savedEvento.getId())) {
+                            invitaciones.add(savedEvento.getId());
+                            invitado.setInvitaciones(invitaciones);
+                            invitadoRepository.save(invitado);
+                        }
+                    }
+                }
+            }
             System.out.println("Evento guardado con imagenUrl: " + savedEvento.getImagenUrl());
-            return ResponseEntity.status(201).body(Map.of("message", "Evento creado exitosamente.", "evento", savedEvento));
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Evento creado exitosamente.", "evento", savedEvento));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return ResponseEntity.status(400).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
         }
     }
     
-    //Actualizar evento
+    @PostMapping("/eventos/{eventoId}/add-invitado")
+    public ResponseEntity<Map<String, String>> addInvitadoToEvento(@PathVariable String eventoId, @RequestBody Map<String, String> request, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No autorizado"));
+        }
+
+        String correoOrganizador = authentication.getName();
+        Organizador organizador = organizadorRepository.findByCorreo(correoOrganizador);
+        if (organizador == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "Organizador no encontrado"));
+        }
+
+        String correoInvitado = request.get("correo");
+        if (correoInvitado == null || correoInvitado.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "El correo del invitado es obligatorio"));
+        }
+
+        Optional<Evento> eventoOpt = eventoRepository.findById(eventoId);
+        if (!eventoOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Evento no encontrado"));
+        }
+
+        Evento evento = eventoOpt.get();
+        if (!evento.getOrganizadorId().equals(organizador.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para modificar este evento"));
+        }
+
+        Invitado invitado = invitadoRepository.findByCorreo(correoInvitado);
+        if (invitado == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Invitado no encontrado"));
+        }
+
+        // Añadir el invitado al evento si no está ya
+        List<String> invitados = evento.getInvitados();
+        if (invitados == null) {
+            invitados = new ArrayList<>();
+            evento.setInvitados(invitados);
+        }
+        if (!invitados.contains(invitado.getId())) {
+            invitados.add(invitado.getId());
+            eventoRepository.save(evento);
+        }
+
+        // Sincronizar la lista de invitaciones del invitado
+        List<String> invitaciones = invitado.getInvitaciones();
+        if (invitaciones == null) {
+            invitaciones = new ArrayList<>();
+            invitado.setInvitaciones(invitaciones);
+        }
+        if (!invitaciones.contains(eventoId)) {
+            invitaciones.add(eventoId);
+            invitado.setInvitaciones(invitaciones); // Solo actualizamos las invitaciones
+            invitadoRepository.save(invitado);
+        }
+
+        return ResponseEntity.ok(Map.of("message", "Invitado añadido al evento con éxito"));
+    }
+    
+ // Actualizar evento
     @PutMapping(value = "/eventos/{id}", consumes = "application/json")
     public ResponseEntity<?> updateEvento(
             @PathVariable String id,
             @RequestBody Map<String, Object> eventData,
             Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
         }
 
         String correo = authentication.getName();
         Organizador organizador = organizadorRepository.findByCorreo(correo);
         if (organizador == null) {
-            return ResponseEntity.status(404).body(Map.of("message", "Organizador no encontrado."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Organizador no encontrado."));
         }
 
         return eventoRepository.findById(id)
                 .map(evento -> {
                     if (!evento.getOrganizadorId().equals(organizador.getId())) {
-                        return ResponseEntity.status(403).body(Map.of("message", "No tienes permiso para editar este evento."));
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para editar este evento."));
                     }
 
                     try {
@@ -222,66 +326,105 @@ public class OrganizadorRestController {
                         evento.setRequisitos((String) eventData.get("requisitos"));
                         evento.setEstadoAprobacion((String) eventData.get("estadoAprobacion"));
 
-                        // Actualizar invitados
+                        // Sincronizar la lista de invitados
                         @SuppressWarnings("unchecked")
                         List<String> newInvitados = (List<String>) eventData.get("invitados");
                         if (newInvitados != null) {
+                            // Determinar invitados eliminados
+                            List<String> oldInvitados = evento.getInvitados();
+                            Set<String> newInvitadosSet = new HashSet<>(newInvitados);
+                            Set<String> oldInvitadosSet = new HashSet<>(oldInvitados);
+
+                            // Invitados eliminados (en old pero no en new)
+                            Set<String> invitadosEliminados = new HashSet<>(oldInvitadosSet);
+                            invitadosEliminados.removeAll(newInvitadosSet);
+
+                            // Invitados añadidos (en new pero no en old)
+                            Set<String> invitadosAnadidos = new HashSet<>(newInvitadosSet);
+                            invitadosAnadidos.removeAll(oldInvitadosSet);
+
+                            // Actualizar invitaciones de los invitados eliminados
+                            for (String invitadoId : invitadosEliminados) {
+                                Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                                if (invitado != null) {
+                                    invitado.getInvitaciones().remove(id);
+                                    invitadoRepository.save(invitado);
+                                }
+                            }
+
+                            // Actualizar invitaciones de los invitados añadidos
+                            for (String invitadoId : invitadosAnadidos) {
+                                Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                                if (invitado != null) {
+                                    List<String> invitaciones = invitado.getInvitaciones();
+                                    if (!invitaciones.contains(id)) {
+                                        invitaciones.add(id);
+                                        invitado.setInvitaciones(invitaciones);
+                                        invitadoRepository.save(invitado);
+                                    }
+                                }
+                            }
+
                             evento.setInvitados(new ArrayList<>(newInvitados));
                         }
 
-                        // Actualizar proveedores
                         @SuppressWarnings("unchecked")
                         Map<String, String> newProveedores = (Map<String, String>) eventData.get("proveedores");
                         if (newProveedores != null) {
                             evento.setProveedores(new HashMap<>(newProveedores));
                         }
 
-                        // Actualizar ubicacionesPrecios
                         @SuppressWarnings("unchecked")
                         List<Map<String, Object>> newUbicacionesPrecios = (List<Map<String, Object>>) eventData.get("ubicacionesPrecios");
                         if (newUbicacionesPrecios != null) {
                             evento.setUbicacionesPrecios(newUbicacionesPrecios);
                         }
 
-                        // No se procesa la imagen (se mantiene la existente)
                         Evento updatedEvento = eventoRepository.save(evento);
                         return ResponseEntity.ok(updatedEvento);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        return ResponseEntity.status(400).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
                     }
                 })
-                .orElse(ResponseEntity.status(404).body(Map.of("message", "Evento no encontrado.")));
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Evento no encontrado.")));
     }
     
-    // Eliminar un evento
+ // Eliminar un evento
     @DeleteMapping("/eventos/{id}")
     public ResponseEntity<?> deleteEvento(@PathVariable String id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(401).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No estás autenticado. Por favor, inicia sesión."));
         }
 
         String correo = authentication.getName();
         Organizador organizador = organizadorRepository.findByCorreo(correo);
         if (organizador == null) {
-            return ResponseEntity.status(404).body(Map.of("message", "Organizador no encontrado."));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Organizador no encontrado."));
         }
 
         return eventoRepository.findById(id)
                 .map(evento -> {
                     if (!evento.getOrganizadorId().equals(organizador.getId())) {
-                        return ResponseEntity.status(403).body(Map.of("message", "No tienes permiso para eliminar este evento."));
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para eliminar este evento."));
+                    }
+                    // Eliminar el evento de las invitaciones de los invitados
+                    for (String invitadoId : evento.getInvitados()) {
+                        Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                        if (invitado != null) {
+                            invitado.getInvitaciones().remove(id);
+                            invitado.getEventosAsistidos().remove(id);
+                            invitadoRepository.save(invitado);
+                        }
                     }
                     eventoRepository.deleteById(id);
-                    // Actualizar eventosOrganizados
                     long count = eventoRepository.countByOrganizadorId(organizador.getId());
                     organizador.setEventosOrganizados((int) count);
                     organizadorRepository.save(organizador);
                     return ResponseEntity.ok().body(Map.of("message", "Evento eliminado exitosamente."));
                 })
-                .orElse(ResponseEntity.status(404).body(Map.of("message", "Evento no encontrado.")));
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Evento no encontrado.")));
     }
-    
     // Recuperar un evento (Sección de eventos)
     @GetMapping("/public/eventos")
     public ResponseEntity<Map<String, Object>> getAllEventos(

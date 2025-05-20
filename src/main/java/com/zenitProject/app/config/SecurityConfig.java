@@ -21,10 +21,11 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/nosotros.html", "/evento.html", "/login.html", "/register.html", "/css/**", "/img/**", "/js/**", "/gif/**", "/uploads/**").permitAll() // Añadido /uploads/**
+                .requestMatchers("/", "/index.html", "/nosotros.html", "/evento.html", "/login.html", "/register.html", "/css/**", "/img/**", "/js/**", "/gif/**", "/uploads/**").permitAll()
                 .requestMatchers("/api/clientes/login", "/rest/clientes/**", "/api/users/login", "/rest/organizadores/public/eventos", "/api/clientes/auth-status").permitAll()
                 .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**").hasRole("ADMIN")
                 .requestMatchers("/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").authenticated()
+                .requestMatchers("/invitado.html", "/acceptedEvents.html", "/checkInvitations.html").hasRole("INVITADO") // Corrección de typos y rutas
                 .requestMatchers("/api/clientes/profile", "/api/clientes/register-event", "/api/clientes/cancel-event/**", "/api/clientes/registered-events", "/clienteEventos.html", "/clienteMoreEventos.html", "/paymentForm.html", "/confirmation.html").hasRole("CLIENTE")
                 .anyRequest().authenticated()
             )
@@ -36,12 +37,12 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-            		.logoutUrl("/logout")
-                    .logoutSuccessHandler(logoutSuccessHandler())
-                    .invalidateHttpSession(true)
-                    .clearAuthentication(true)
-                    .deleteCookies("JSESSIONID")
-                    .permitAll()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(logoutSuccessHandler())
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll()
             );
         return http.build();
     }
@@ -70,15 +71,12 @@ public class SecurityConfig {
     @Bean
     public LogoutSuccessHandler logoutSuccessHandler() {
         return (request, response, authentication) -> {
-            // Limpiar la caché del navegador
             response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
             response.setHeader("Pragma", "no-cache");
             response.setDateHeader("Expires", 0);
-            // Redirigir a la página de inicio
             response.sendRedirect("/index.html");
         };
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -48,34 +48,34 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (admin != null) {
             return User.withUsername(admin.getCorreo())
                     .password(admin.getPassword())
-                    .roles(admin.getRole())
+                    .roles("ADMIN") // Añadir prefijo ROLE_
                     .build();
         }
         
-     // Buscar en la colección de organizadores
+        // Buscar en la colección de organizadores
         Organizador organizador = organizadorRepository.findByCorreo(username);
         if (organizador != null) {
             return User.withUsername(organizador.getCorreo())
                     .password(organizador.getPassword())
-                    .roles(organizador.getRole())
+                    .roles("ORGANIZADOR")
                     .build();
         }
         
-     // Buscar en la colección de proveedores
+        // Buscar en la colección de proveedores
         Proveedor proveedor = proveedorRepository.findByCorreo(username);
         if (proveedor != null) {
             return User.withUsername(proveedor.getCorreo())
                     .password(proveedor.getPassword())
-                    .roles(proveedor.getRole())
+                    .roles("PROVEEDOR")
                     .build();
         }
         
-     // Buscar en la colección de invitados
+        // Buscar en la colección de invitados
         Invitado invitado = invitadoRepository.findByCorreo(username);
         if (invitado != null) {
             return User.withUsername(invitado.getCorreo())
                     .password(invitado.getPassword())
-                    .roles(invitado.getRole())
+                    .roles("INVITADO")
                     .build();
         }
 
@@ -84,16 +84,16 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (cliente != null) {
             return User.withUsername(cliente.getCorreo())
                     .password(cliente.getPassword())
-                    .roles(cliente.getRole())
+                    .roles("CLIENTE")
                     .build();
         }
         
-     // Buscar en la colección de supervisores
+        // Buscar en la colección de supervisores
         Supervisor supervisor = supervisorRepository.findByCorreo(username);
         if (supervisor != null) {
             return User.withUsername(supervisor.getCorreo())
                     .password(supervisor.getPassword())
-                    .roles(supervisor.getRole())
+                    .roles("SUPERVISOR")
                     .build();
         }
 
