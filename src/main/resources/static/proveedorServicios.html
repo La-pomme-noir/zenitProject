@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="Description" content="Zénit Eventos - Gestionar Servicios"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/admin.css">
+    <title>Zénit Eventos - Gestionar Servicios</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1C2526;
+            color: white;
+        }
+        main {
+            flex: 1 0 auto;
+        }
+        main.contenedor {
+            margin-top: 100px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0 15px;
+        }
+        .header {
+            background-color: #1C2526;
+            padding: 1rem;
+            border-bottom: 1px solid #3A4445;
+        }
+        .header__logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header__title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .header__navbar a {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+        .header__navbar a:hover {
+            color: #00C4B4;
+        }
+        .proveedor {
+            margin-bottom: 2rem;
+        }
+        .title__sections {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .proveedor-servicios {
+            background-color: #3A4445;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 350px;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            display: block;
+        }
+        .form-select {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 2rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #FFFFFF;
+            color: #333;
+            border: 1px solid #00C4B4;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-select:focus {
+            border-color: #009688;
+            box-shadow: 0 0 5px rgba(0, 196, 180, 0.5);
+            outline: none;
+        }
+        .form-select option {
+            background-color: #FFFFFF;
+            color: #333;
+        }
+        .global__button {
+            background-color: #00C4B4;
+            border-color: #00C4B4;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .global__button:hover {
+            background-color: #009688;
+            border-color: #009688;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .servicios-categoria {
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .servicios-categoria h3 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00C4B4;
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+        .list-group-item {
+            background-color: #4A5556;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .footer {
+            background-color: #1C2526;
+            padding: 2rem;
+            border-top: 1px solid #3A4445;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .footer__logo {
+            margin-bottom: 1rem;
+        }
+        .footer__logo img {
+            width: 100px;
+        }
+        .footer__social a {
+            color: white;
+            margin: 0 0.5rem;
+            font-size: 1.2rem;
+        }
+        .footer__social a:hover {
+            color: #00C4B4;
+        }
+        .footer__navbar {
+            margin-top: 1rem;
+        }
+        .footer__links {
+            color: white;
+            margin: 0 1rem;
+            text-decoration: none;
+        }
+        .footer__links:hover {
+            color: #00C4B4;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__logo">
+            <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
+            <span class="header__title">Zenit Eventos</span>
+            <nav class="header__navbar">
+                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="contenedor">
+        <div class="proveedor">
+            <h2 class="title__sections">Gestionar Servicios</h2>
+            <div class="proveedor-servicios">
+                <form id="servicioForm">
+                    <div class="mb-3">
+                        <label for="categoria" class="form-label">Categoría</label>
+                        <select class="form-select" id="categoria" required>
+                            <option value="" disabled selected>Selecciona una categoría</option>
+                            <option value="Sonido e Iluminación">Sonido e Iluminación</option>
+                            <option value="Decoración">Decoración</option>
+                            <option value="Logística">Logística</option>
+                            <option value="Servicio Personal">Servicio Personal</option>
+                            <option value="Taquillería">Taquillería</option>
+                            <option value="Alimentación">Alimentación</option>
+                            <option value="Marketing">Marketing</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="global__button">Agregar</button>
+                </form>
+                <h3 class="servicios-categoria">Categorías Registradas</h3>
+                <div id="serviciosList"></div>
+                <a class="global__button" href="/proveedor.html">Volver al Panel</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y condiciones</a>
+            <a href="#" class="footer__links">Política de cookies</a>
+        </nav>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:8092/rest/proveedores';
+        const PROVEEDOR_CORREO = 'katherine@gmail.com';
+
+        async function loadServicios() {
+            try {
+                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}`);
+                const proveedor = await response.json();
+                const serviciosList = document.getElementById('serviciosList');
+                serviciosList.innerHTML = '';
+
+                if (proveedor.categorias && proveedor.categorias.length > 0) {
+                    const div = document.createElement('div');
+                    div.className = 'servicios-categoria';
+                    div.innerHTML = `
+                        <ul class="list-group">
+                            ${proveedor.categorias.map(categoria => `<li class="list-group-item">${categoria}</li>`).join('')}
+                        </ul>
+                    `;
+                    serviciosList.appendChild(div);
+                } else {
+                    serviciosList.innerHTML = '<p>No hay categorías registradas</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar las categorías');
+            }
+        }
+
+        document.getElementById('servicioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const categoria = document.getElementById('categoria').value;
+
+            if (!categoria) {
+                alert('Por favor, selecciona una categoría.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}/categorias`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ categoria })
+                });
+
+                if (response.ok) {
+                    alert('Categoría agregada exitosamente');
+                    document.getElementById('servicioForm').reset();
+                    loadServicios();
+                } else {
+                    alert('Error al agregar la categoría');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error en la conexión con el servidor');
+            }
+        });
+
+        window.onload = loadServicios;
+    </script>
+</body>
+</html>

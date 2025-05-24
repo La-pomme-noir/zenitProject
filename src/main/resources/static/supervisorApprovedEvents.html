@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="Description" content="Zénit Eventos Supervisor"/>
+    <meta name="Description" content="Zénit Eventos - Eventos Aprobados"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
-    <title>Zénit Eventos Supervisor</title>
+    <title>Zénit Eventos - Eventos Aprobados</title>
     <style>
         html, body {
             height: 100%;
@@ -71,43 +71,41 @@
             text-align: center;
             margin-bottom: 2rem;
         }
-        .supervisor-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-        .supervisor-content__cards {
+        .eventos-table-container {
             background-color: #3A4445;
             border-radius: 10px;
             padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            transition: transform 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            margin: 0 auto;
         }
-        .supervisor-content__cards:hover {
-            transform: translateY(-5px);
-        }
-        .supervisor-content__cards img {
+        .table {
             width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 1rem;
+            border-collapse: collapse;
+            color: white;
         }
-        .supervisor-content__title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #00C4B4;
-            margin-bottom: 0.5rem;
+        .table thead {
+            background-color: #1C2526;
         }
-        .supervisor-content__parrafo {
+        .table th {
+            padding: 12px;
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: white;
+            border-bottom: 2px solid #4A5556;
+            text-transform: uppercase;
             font-size: 0.9rem;
-            margin-bottom: 1rem;
-            color: #B0B0B0;
+        }
+        .table td {
+            padding: 12px;
             font-family: 'Open Sans', sans-serif;
+            border-bottom: 1px solid #4A5556;
+            vertical-align: middle;
+            font-size: 0.85rem;
+        }
+        .table tbody tr:hover {
+            background-color: #4A5556;
         }
         .global__button {
             background-color: #00C4B4;
@@ -121,7 +119,7 @@
             text-align: center;
             width: 100%;
             max-width: 400px;
-            margin: 1rem auto 0;
+            margin: 2rem auto 0;
             display: block;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
@@ -130,9 +128,6 @@
             border-color: #009688;
             color: white;
             transform: translateY(-2px);
-        }
-        .shadow-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .footer {
             background-color: #1C2526;
@@ -182,27 +177,20 @@
 
     <main class="contenedor">
         <div class="supervisor">
-            <h2 class="title__sections">Panel Supervisor</h2>
-            <div class="supervisor-content shadow-card">
-                <div class="supervisor-content__cards">
-                    <img src="./img/profile.jpg" alt="Perfil Supervisor">
-                    <h3 class="supervisor-content__title">Perfil Supervisor</h3>
-                    <p class="supervisor-content__parrafo">Consulta la información de tu perfil como supervisor.</p>
-                    <a class="global__button" href="./supervisorProfile.html">Mirar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/admin-listEvents.jpg" alt="Eventos Por Confirmar">
-                    <h3 class="supervisor-content__title">Eventos Por Confirmar</h3>
-                    <p class="supervisor-content__parrafo">Revisa y aprueba los eventos pendientes asignados.</p>
-                    <a class="global__button" href="./supervisorPendingEvents.html">Revisar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/Aprobada.jpg" alt="Eventos Aprobados">
-                    <h3 class="supervisor-content__title">Eventos Aprobados</h3>
-                    <p class="supervisor-content__parrafo">Consulta los eventos que han sido aprobados.</p>
-                    <a class="global__button" href="./supervisorApprovedEvents.html">Listar</a>
-                </div>
+            <h2 class="title__sections">Eventos Aprobados</h2>
+            <div class="eventos-table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="approvedEventsBody"></tbody>
+                </table>
             </div>
+            <a class="global__button" href="/supervisor.html">Volver al Panel</a>
         </div>
     </main>
 
@@ -228,5 +216,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:8092/rest/eventos';
+        const SUPERVISOR_CORREO = 'supervisor@zenit.com';
+
+        async function loadApprovedEvents() {
+            try {
+                const response = await fetch(`${API_URL}?t=${new Date().getTime()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    credentials: 'include'
+                });
+                if (!response.ok) throw new Error(`Error al cargar eventos: ${response.status}`);
+                const events = await response.json();
+
+                const approvedEventsBody = document.getElementById('approvedEventsBody');
+                approvedEventsBody.innerHTML = '';
+
+                const approvedEvents = events.filter(event => (event.estadoAprobacion || 'PENDIENTE') === 'APROBADO');
+
+                if (approvedEvents.length === 0) {
+                    approvedEventsBody.innerHTML = '<tr><td colspan="3" class="text-center">No hay eventos aprobados.</td></tr>';
+                    return;
+                }
+
+                approvedEvents.forEach(event => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${event.nombreEvento || 'Sin nombre'}</td>
+                        <td>${new Date(event.fecha).toLocaleDateString()}</td>
+                        <td>${event.estadoAprobacion || 'PENDIENTE'}</td>
+                    `;
+                    approvedEventsBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('approvedEventsBody').innerHTML = '<tr><td colspan="3">Error al cargar eventos</td></tr>';
+            }
+        }
+
+        window.onload = loadApprovedEvents;
+    </script>
 </body>
 </html>

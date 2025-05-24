@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="Description" content="Zénit Eventos Supervisor"/>
+    <meta name="Description" content="Zénit Eventos - Perfil Supervisor"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
-    <title>Zénit Eventos Supervisor</title>
+    <title>Zénit Eventos - Perfil Supervisor</title>
     <style>
         html, body {
             height: 100%;
@@ -71,43 +71,54 @@
             text-align: center;
             margin-bottom: 2rem;
         }
-        .supervisor-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-        .supervisor-content__cards {
+        .supervisor-profile {
             background-color: #3A4445;
             border-radius: 10px;
             padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            transition: transform 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .supervisor-content__cards:hover {
-            transform: translateY(-5px);
-        }
-        .supervisor-content__cards img {
+        .supervisor-profile img {
             width: 100%;
-            height: 150px;
-            object-fit: cover;
+            max-width: 200px;
+            height: auto;
             border-radius: 10px;
-            margin-bottom: 1rem;
+            margin: 0 auto 1rem;
+            display: block;
         }
-        .supervisor-content__title {
-            font-size: 1.2rem;
+        .supervisor-profile h3 {
+            font-size: 1.5rem;
             font-weight: bold;
             color: #00C4B4;
-            margin-bottom: 0.5rem;
-        }
-        .supervisor-content__parrafo {
-            font-size: 0.9rem;
+            text-align: center;
             margin-bottom: 1rem;
+        }
+        .supervisor-profile p {
+            font-size: 0.9rem;
             color: #B0B0B0;
             font-family: 'Open Sans', sans-serif;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .supervisor-profile ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+        .supervisor-profile ul li {
+            background-color: #4A5556;
+            color: white;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85rem;
+            text-align: center;
         }
         .global__button {
             background-color: #00C4B4;
@@ -121,7 +132,7 @@
             text-align: center;
             width: 100%;
             max-width: 400px;
-            margin: 1rem auto 0;
+            margin: 0 auto;
             display: block;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
@@ -130,9 +141,6 @@
             border-color: #009688;
             color: white;
             transform: translateY(-2px);
-        }
-        .shadow-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .footer {
             background-color: #1C2526;
@@ -182,26 +190,18 @@
 
     <main class="contenedor">
         <div class="supervisor">
-            <h2 class="title__sections">Panel Supervisor</h2>
-            <div class="supervisor-content shadow-card">
-                <div class="supervisor-content__cards">
-                    <img src="./img/profile.jpg" alt="Perfil Supervisor">
-                    <h3 class="supervisor-content__title">Perfil Supervisor</h3>
-                    <p class="supervisor-content__parrafo">Consulta la información de tu perfil como supervisor.</p>
-                    <a class="global__button" href="./supervisorProfile.html">Mirar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/admin-listEvents.jpg" alt="Eventos Por Confirmar">
-                    <h3 class="supervisor-content__title">Eventos Por Confirmar</h3>
-                    <p class="supervisor-content__parrafo">Revisa y aprueba los eventos pendientes asignados.</p>
-                    <a class="global__button" href="./supervisorPendingEvents.html">Revisar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/Aprobada.jpg" alt="Eventos Aprobados">
-                    <h3 class="supervisor-content__title">Eventos Aprobados</h3>
-                    <p class="supervisor-content__parrafo">Consulta los eventos que han sido aprobados.</p>
-                    <a class="global__button" href="./supervisorApprovedEvents.html">Listar</a>
-                </div>
+            <h2 class="title__sections">Perfil Supervisor</h2>
+            <div class="supervisor-profile">
+                <img src="./img/profile.jpg" alt="Perfil Supervisor">
+                <h3>Sobre Mí</h3>
+                <p>Soy un supervisor encargado de supervisar y aprobar los eventos de Zénit Eventos. Mi rol es garantizar que todos los eventos cumplan con los estándares establecidos y se ejecuten sin inconvenientes.</p>
+                <h3>Información</h3>
+                <ul>
+                    <li>Nombre: Esteban Supervisor</li>
+                    <li>Rol: Supervisor</li>
+                    <li>Correo: Esteban@gmail.com</li>
+                </ul>
+                <a class="global__button" href="/supervisor.html">Volver al Panel</a>
             </div>
         </div>
     </main>

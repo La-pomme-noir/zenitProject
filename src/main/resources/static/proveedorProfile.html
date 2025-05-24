@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="Description" content="Zénit Eventos Supervisor"/>
+    <meta name="Description" content="Zénit Eventos - Perfil Proveedor"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
-    <title>Zénit Eventos Supervisor</title>
+    <title>Zénit Eventos - Perfil Proveedor</title>
     <style>
         html, body {
             height: 100%;
@@ -60,7 +59,7 @@
         .header__navbar a:hover {
             color: #00C4B4;
         }
-        .supervisor {
+        .proveedor {
             margin-bottom: 2rem;
         }
         .title__sections {
@@ -71,43 +70,57 @@
             text-align: center;
             margin-bottom: 2rem;
         }
-        .supervisor-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-        .supervisor-content__cards {
+        .proveedor-profile {
             background-color: #3A4445;
             border-radius: 10px;
             padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            transition: transform 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 400px;
+            text-align: center;
         }
-        .supervisor-content__cards:hover {
-            transform: translateY(-5px);
-        }
-        .supervisor-content__cards img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
+        .proveedor-profile__img {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 2rem;
             border-radius: 10px;
-            margin-bottom: 1rem;
+            object-fit: cover;
         }
-        .supervisor-content__title {
-            font-size: 1.2rem;
+        .proveedor-profile__title {
+            font-size: 1.5rem;
             font-weight: bold;
             color: #00C4B4;
             margin-bottom: 0.5rem;
         }
-        .supervisor-content__parrafo {
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            color: #B0B0B0;
+        .proveedor-profile__descripcion {
             font-family: 'Open Sans', sans-serif;
+            font-size: 0.9rem;
+            color: #ffffff;
+            text-align: justify;
+            margin-bottom: 1.5rem;
+            padding: 0 1rem;
+        }
+        .proveedor-profile__eventos-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00C4B4;
+            margin-bottom: 0.75rem;
+        }
+        .list-group-item {
+            background-color: #4A5556;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85rem;
+            text-align: center;
         }
         .global__button {
             background-color: #00C4B4;
@@ -130,9 +143,6 @@
             border-color: #009688;
             color: white;
             transform: translateY(-2px);
-        }
-        .shadow-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         .footer {
             background-color: #1C2526;
@@ -174,34 +184,27 @@
             <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
-                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
+                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Administrador</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
 
     <main class="contenedor">
-        <div class="supervisor">
-            <h2 class="title__sections">Panel Supervisor</h2>
-            <div class="supervisor-content shadow-card">
-                <div class="supervisor-content__cards">
-                    <img src="./img/profile.jpg" alt="Perfil Supervisor">
-                    <h3 class="supervisor-content__title">Perfil Supervisor</h3>
-                    <p class="supervisor-content__parrafo">Consulta la información de tu perfil como supervisor.</p>
-                    <a class="global__button" href="./supervisorProfile.html">Mirar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/admin-listEvents.jpg" alt="Eventos Por Confirmar">
-                    <h3 class="supervisor-content__title">Eventos Por Confirmar</h3>
-                    <p class="supervisor-content__parrafo">Revisa y aprueba los eventos pendientes asignados.</p>
-                    <a class="global__button" href="./supervisorPendingEvents.html">Revisar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/Aprobada.jpg" alt="Eventos Aprobados">
-                    <h3 class="supervisor-content__title">Eventos Aprobados</h3>
-                    <p class="supervisor-content__parrafo">Consulta los eventos que han sido aprobados.</p>
-                    <a class="global__button" href="./supervisorApprovedEvents.html">Listar</a>
-                </div>
+        <div class="proveedor">
+            <h2 class="title__sections">Perfil del Proveedor</h2>
+            <div class="proveedor-profile">
+                <img src="./img/profile.jpg" alt="Perfil Proveedor" class="proveedor-profile__img">
+                <h3 class="proveedor-profile__title">Sobre Mí</h3>
+                <p id="sobreMi" class="proveedor-profile__descripcion">
+                    <i class="fas fa-star" style="color: #00C4B4; margin-right: 0.5rem;"></i>
+                    Cargando...
+                </p>
+                <h3 class="proveedor-profile__eventos-title">Eventos Realizados</h3>
+                <ul id="eventosRealizadosList" class="list-group">
+                    <li class="list-group-item">Cargando...</li>
+                </ul>
+                <a class="global__button" href="/proveedor.html">Volver al Panel</a>
             </div>
         </div>
     </main>
@@ -228,5 +231,41 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+    <script>
+        const API_URL = 'http://localhost:8092/rest/proveedores';
+        const PROVEEDOR_CORREO = 'katherine@gmail.com';
+
+        async function loadPerfil() {
+            try {
+                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}`);
+                const proveedor = await response.json();
+                const sobreMi = document.getElementById('sobreMi');
+                const eventosRealizadosList = document.getElementById('eventosRealizadosList');
+
+                // Descripción más llamativa con formato
+                sobreMi.innerHTML = `
+                    <i class="fas fa-star" style="color: #00C4B4; margin-right: 0.5rem;"></i>
+                    ${proveedor.descripcion || '¡Transformamos tus eventos en experiencias inolvidables! Somos especialistas en ofrecer soluciones personalizadas, con pasión por los detalles y compromiso con la excelencia. Confía en nosotros para hacer realidad tus ideas.'}
+                `;
+
+                eventosRealizadosList.innerHTML = '';
+                if (proveedor.eventosRealizados && proveedor.eventosRealizados.length > 0) {
+                    proveedor.eventosRealizados.forEach(evento => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = evento;
+                        eventosRealizadosList.appendChild(li);
+                    });
+                } else {
+                    eventosRealizadosList.innerHTML = '<li class="list-group-item">No hay eventos realizados</li>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar el perfil');
+            }
+        }
+
+        window.onload = loadPerfil;
+    </script>
 </body>
 </html>
