@@ -18,11 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zenitProject.app.entidades.Evento;
 import com.zenitProject.app.entidades.Invitado;
 import com.zenitProject.app.entidades.Organizador;
+import com.zenitProject.app.entidades.Proveedor;
 import com.zenitProject.app.repository.EventoRepository;
 import com.zenitProject.app.repository.InvitadoRepository;
 import com.zenitProject.app.repository.OrganizadorRepository;
 import com.zenitProject.app.repository.ProveedorRepository;
-import com.zenitProject.app.repository.SupervisorRepository;
 import com.cloudinary.Cloudinary;
 
 import java.io.IOException;
@@ -52,9 +52,11 @@ public class OrganizadorRestController {
     private InvitadoRepository invitadoRepository;
     
     @Autowired
+    private ProveedorRepository proveedorRepository;
+    
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Listar todos los organizadores
     @GetMapping
     public List<Organizador> getAllOrganizadores() {
         return organizadorRepository.findAll();
@@ -76,12 +78,11 @@ public class OrganizadorRestController {
         }
         organizador.setPassword(passwordEncoder.encode(organizador.getPassword()));
         organizador.setRole("ORGANIZADOR");
-        organizador.setEventosOrganizados(0); // Inicializar a 0
+        organizador.setEventosOrganizados(0);
         Organizador saved = organizadorRepository.save(organizador);
         return ResponseEntity.ok(saved);
     }
     
-    // Nuevo endpoint para listar eventos del organizador autenticado
     @GetMapping("/eventos")
     public ResponseEntity<List<Evento>> getEventosByOrganizador(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -98,7 +99,6 @@ public class OrganizadorRestController {
         return ResponseEntity.ok(eventos);
     }
     
-    // Obtener un evento por ID (modificado para permitir acceso a invitados)
     @GetMapping("/eventos/{id}")
     public ResponseEntity<Evento> getEventoById(@PathVariable String id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
@@ -126,7 +126,6 @@ public class OrganizadorRestController {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
     
-    // Nuevo endpoint público para obtener un evento por ID
     @GetMapping("/public/eventos/{id}")
     public ResponseEntity<Evento> getEventoByIdPublic(@PathVariable String id) {
         return eventoRepository.findById(id)
@@ -134,7 +133,6 @@ public class OrganizadorRestController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
     
- // Crear un evento
     @PostMapping(value = "/eventos", consumes = {"multipart/form-data"})
     public ResponseEntity<?> createEvento(
             @RequestPart(value = "eventData", required = true) String eventDataStr,
@@ -169,25 +167,13 @@ public class OrganizadorRestController {
 
             @SuppressWarnings("unchecked")
             List<String> invitados = (List<String>) eventData.get("invitados");
-            if (invitados != null) {
+            if (invitados != null && !invitados.isEmpty()) {
                 evento.setInvitados(new ArrayList<>(invitados));
-                // Sincronizar con la lista de invitaciones de los invitados
-                for (String invitadoId : invitados) {
-                    Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
-                    if (invitado != null) {
-                        List<String> invitaciones = invitado.getInvitaciones();
-                        if (!invitaciones.contains(evento.getId())) {
-                            invitaciones.add(evento.getId());
-                            invitado.setInvitaciones(invitaciones);
-                            invitadoRepository.save(invitado);
-                        }
-                    }
-                }
             }
 
             @SuppressWarnings("unchecked")
             Map<String, String> proveedores = (Map<String, String>) eventData.get("proveedores");
-            if (proveedores != null) {
+            if (proveedores != null && !proveedores.isEmpty()) {
                 evento.setProveedores(new HashMap<>(proveedores));
             }
 
@@ -213,8 +199,8 @@ public class OrganizadorRestController {
             }
 
             Evento savedEvento = eventoRepository.save(evento);
-            // Sincronizar invitaciones después de guardar el evento (porque ahora tenemos el ID)
-            if (invitados != null) {
+
+            if (invitados != null && !invitados.isEmpty()) {
                 for (String invitadoId : invitados) {
                     Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
                     if (invitado != null) {
@@ -227,11 +213,35 @@ public class OrganizadorRestController {
                     }
                 }
             }
+
+            if (proveedores != null && !proveedores.isEmpty()) {
+                for (String proveedorId : proveedores.keySet()) {
+                    Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                    if (proveedorOpt.isPresent()) {
+                        Proveedor proveedor = proveedorOpt.get();
+                        List<String> pendientes = proveedor.getEventosPendientes();
+                        if (pendientes == null) {
+                            pendientes = new ArrayList<>();
+                        }
+                        if (!pendientes.contains(savedEvento.getId())) {
+                            pendientes.add(savedEvento.getId());
+                            proveedor.setEventosPendientes(pendientes);
+                            proveedorRepository.save(proveedor);
+                        }
+                    } else {
+                        System.out.println("Proveedor con ID " + proveedorId + " no encontrado.");
+                    }
+                }
+            }
+
             System.out.println("Evento guardado con imagenUrl: " + savedEvento.getImagenUrl());
             return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Evento creado exitosamente.", "evento", savedEvento));
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Error inesperado: " + e.getMessage()));
         }
     }
     
@@ -267,33 +277,29 @@ public class OrganizadorRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Invitado no encontrado"));
         }
 
-        // Añadir el invitado al evento si no está ya
         List<String> invitados = evento.getInvitados();
         if (invitados == null) {
             invitados = new ArrayList<>();
-            evento.setInvitados(invitados);
         }
         if (!invitados.contains(invitado.getId())) {
             invitados.add(invitado.getId());
+            evento.setInvitados(invitados);
             eventoRepository.save(evento);
         }
 
-        // Sincronizar la lista de invitaciones del invitado
         List<String> invitaciones = invitado.getInvitaciones();
         if (invitaciones == null) {
             invitaciones = new ArrayList<>();
-            invitado.setInvitaciones(invitaciones);
         }
         if (!invitaciones.contains(eventoId)) {
             invitaciones.add(eventoId);
-            invitado.setInvitaciones(invitaciones); // Solo actualizamos las invitaciones
+            invitado.setInvitaciones(invitaciones);
             invitadoRepository.save(invitado);
         }
 
         return ResponseEntity.ok(Map.of("message", "Invitado añadido al evento con éxito"));
     }
     
- // Actualizar evento
     @PutMapping(value = "/eventos/{id}", consumes = "application/json")
     public ResponseEntity<?> updateEvento(
             @PathVariable String id,
@@ -316,6 +322,7 @@ public class OrganizadorRestController {
                     }
 
                     try {
+                        // Actualizar los campos básicos del evento
                         evento.setNombreEvento((String) eventData.get("nombreEvento"));
                         evento.setFecha((String) eventData.get("fecha"));
                         evento.setLugar((String) eventData.get("lugar"));
@@ -326,20 +333,19 @@ public class OrganizadorRestController {
                         evento.setRequisitos((String) eventData.get("requisitos"));
                         evento.setEstadoAprobacion((String) eventData.get("estadoAprobacion"));
 
-                        // Sincronizar la lista de invitados
+                        // Manejar invitados
                         @SuppressWarnings("unchecked")
                         List<String> newInvitados = (List<String>) eventData.get("invitados");
                         if (newInvitados != null) {
-                            // Determinar invitados eliminados
                             List<String> oldInvitados = evento.getInvitados();
                             Set<String> newInvitadosSet = new HashSet<>(newInvitados);
-                            Set<String> oldInvitadosSet = new HashSet<>(oldInvitados);
+                            Set<String> oldInvitadosSet = oldInvitados != null ? new HashSet<>(oldInvitados) : new HashSet<>();
 
-                            // Invitados eliminados (en old pero no en new)
+                            // Invitados eliminados
                             Set<String> invitadosEliminados = new HashSet<>(oldInvitadosSet);
                             invitadosEliminados.removeAll(newInvitadosSet);
 
-                            // Invitados añadidos (en new pero no en old)
+                            // Invitados añadidos
                             Set<String> invitadosAnadidos = new HashSet<>(newInvitadosSet);
                             invitadosAnadidos.removeAll(oldInvitadosSet);
 
@@ -368,12 +374,70 @@ public class OrganizadorRestController {
                             evento.setInvitados(new ArrayList<>(newInvitados));
                         }
 
+                        // Manejar proveedores
                         @SuppressWarnings("unchecked")
                         Map<String, String> newProveedores = (Map<String, String>) eventData.get("proveedores");
                         if (newProveedores != null) {
+                            Map<String, String> oldProveedores = evento.getProveedores();
+                            Set<String> newProveedoresSet = new HashSet<>(newProveedores.keySet());
+                            Set<String> oldProveedoresSet = oldProveedores != null ? new HashSet<>(oldProveedores.keySet()) : new HashSet<>();
+
+                            // Proveedores eliminados
+                            Set<String> proveedoresEliminados = new HashSet<>(oldProveedoresSet);
+                            proveedoresEliminados.removeAll(newProveedoresSet);
+
+                            // Proveedores añadidos
+                            Set<String> proveedoresAnadidos = new HashSet<>(newProveedoresSet);
+                            proveedoresAnadidos.removeAll(oldProveedoresSet);
+
+                            // Depuración: Mostrar proveedores añadidos y eliminados
+                            System.out.println("Evento ID: " + id);
+                            System.out.println("Proveedores eliminados: " + proveedoresEliminados);
+                            System.out.println("Proveedores añadidos: " + proveedoresAnadidos);
+
+                            // Actualizar eventosPendientes de los proveedores eliminados
+                            for (String proveedorId : proveedoresEliminados) {
+                                Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                                if (proveedorOpt.isPresent()) {
+                                    Proveedor proveedor = proveedorOpt.get();
+                                    List<String> pendientes = proveedor.getEventosPendientes();
+                                    if (pendientes != null && pendientes.contains(id)) {
+                                        pendientes.remove(id);
+                                        proveedor.setEventosPendientes(pendientes);
+                                        proveedorRepository.save(proveedor);
+                                        System.out.println("Proveedor " + proveedorId + " actualizado - Evento " + id + " eliminado de eventosPendientes: " + pendientes);
+                                    }
+                                } else {
+                                    System.out.println("Proveedor " + proveedorId + " no encontrado al intentar eliminar evento " + id);
+                                }
+                            }
+
+                            // Actualizar eventosPendientes de los proveedores añadidos
+                            for (String proveedorId : proveedoresAnadidos) {
+                                Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                                if (proveedorOpt.isPresent()) {
+                                    Proveedor proveedor = proveedorOpt.get();
+                                    List<String> pendientes = proveedor.getEventosPendientes();
+                                    if (pendientes == null) {
+                                        pendientes = new ArrayList<>();
+                                    }
+                                    if (!pendientes.contains(id)) {
+                                        pendientes.add(id);
+                                        proveedor.setEventosPendientes(pendientes);
+                                        proveedorRepository.save(proveedor);
+                                        System.out.println("Proveedor " + proveedorId + " actualizado - Evento " + id + " añadido a eventosPendientes: " + pendientes);
+                                    } else {
+                                        System.out.println("Evento " + id + " ya está en eventosPendientes de proveedor " + proveedorId);
+                                    }
+                                } else {
+                                    System.out.println("Proveedor " + proveedorId + " no encontrado al intentar añadir evento " + id);
+                                }
+                            }
+
                             evento.setProveedores(new HashMap<>(newProveedores));
                         }
 
+                        // Manejar ubicaciones y precios
                         @SuppressWarnings("unchecked")
                         List<Map<String, Object>> newUbicacionesPrecios = (List<Map<String, Object>>) eventData.get("ubicacionesPrecios");
                         if (newUbicacionesPrecios != null) {
@@ -390,7 +454,6 @@ public class OrganizadorRestController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Evento no encontrado.")));
     }
     
- // Eliminar un evento
     @DeleteMapping("/eventos/{id}")
     public ResponseEntity<?> deleteEvento(@PathVariable String id, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -408,7 +471,6 @@ public class OrganizadorRestController {
                     if (!evento.getOrganizadorId().equals(organizador.getId())) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para eliminar este evento."));
                     }
-                    // Eliminar el evento de las invitaciones de los invitados
                     for (String invitadoId : evento.getInvitados()) {
                         Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
                         if (invitado != null) {
@@ -425,7 +487,7 @@ public class OrganizadorRestController {
                 })
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Evento no encontrado.")));
     }
-    // Recuperar un evento (Sección de eventos)
+    
     @GetMapping("/public/eventos")
     public ResponseEntity<Map<String, Object>> getAllEventos(
             @RequestParam(defaultValue = "0") int page,
@@ -440,7 +502,6 @@ public class OrganizadorRestController {
             eventosPage = eventoRepository.findByEstadoAprobacion("Pendiente", pageable);
         }
 
-        // Mapear eventos a un formato que incluya los campos necesarios
         List<Map<String, Object>> eventosFiltrados = eventosPage.getContent().stream()
                 .map(evento -> {
                     Map<String, Object> eventoMap = new HashMap<>();
@@ -460,7 +521,6 @@ public class OrganizadorRestController {
                 })
                 .collect(Collectors.toList());
 
-        // Construir la respuesta
         Map<String, Object> response = new HashMap<>();
         response.put("eventos", eventosFiltrados);
         response.put("currentPage", eventosPage.getNumber());
@@ -470,7 +530,6 @@ public class OrganizadorRestController {
         return ResponseEntity.ok(response);
     }
 
-    // Actualizar un organizador
     @PutMapping("/{correo}")
     public ResponseEntity<Organizador> updateOrganizador(@PathVariable String correo, @RequestBody Organizador organizador) {
         Organizador existing = organizadorRepository.findByCorreo(correo);
@@ -489,7 +548,6 @@ public class OrganizadorRestController {
         return ResponseEntity.ok(updated);
     }
 
-    // Eliminar un organizador
     @DeleteMapping("/{correo}")
     public ResponseEntity<Void> deleteOrganizador(@PathVariable String correo) {
         Organizador organizador = organizadorRepository.findByCorreo(correo);
@@ -500,7 +558,6 @@ public class OrganizadorRestController {
         return ResponseEntity.notFound().build();
     }
 
-    // POST: Registro con verificación de rol
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(
             @RequestBody Map<String, String> registerRequest) {

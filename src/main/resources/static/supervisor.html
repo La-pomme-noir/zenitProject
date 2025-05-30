@@ -11,162 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/admin.css">
+    <link rel="stylesheet" href="./css/invitado.css"> <!-- Mismo archivo CSS que invitado.html -->
     <title>Zénit Eventos Supervisor</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #1C2526;
-            color: white;
-        }
-        main {
-            flex: 1 0 auto;
-        }
-        main.contenedor {
-            margin-top: 100px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 15px;
-        }
-        .header {
-            background-color: #1C2526;
-            padding: 1rem;
-            border-bottom: 1px solid #3A4445;
-        }
-        .header__logo {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header__title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header__navbar a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .header__navbar a:hover {
-            color: #00C4B4;
-        }
-        .supervisor {
-            margin-bottom: 2rem;
-        }
-        .title__sections {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .supervisor-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-        .supervisor-content__cards {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            transition: transform 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .supervisor-content__cards:hover {
-            transform: translateY(-5px);
-        }
-        .supervisor-content__cards img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-        .supervisor-content__title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #00C4B4;
-            margin-bottom: 0.5rem;
-        }
-        .supervisor-content__parrafo {
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            color: #B0B0B0;
-            font-family: 'Open Sans', sans-serif;
-        }
-        .global__button {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            margin: 1rem auto 0;
-            display: block;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .global__button:hover {
-            background-color: #009688;
-            border-color: #009688;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .shadow-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .footer {
-            background-color: #1C2526;
-            padding: 2rem;
-            border-top: 1px solid #3A4445;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .footer__logo {
-            margin-bottom: 1rem;
-        }
-        .footer__logo img {
-            width: 100px;
-        }
-        .footer__social a {
-            color: white;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .footer__social a:hover {
-            color: #00C4B4;
-        }
-        .footer__navbar {
-            margin-top: 1rem;
-        }
-        .footer__links {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        .footer__links:hover {
-            color: #00C4B4;
-        }
-    </style>
 </head>
 <body>
     <header class="header">
@@ -177,35 +23,36 @@
                 <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
-        </div>
-    </header>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
 
     <main class="contenedor">
-        <div class="supervisor">
+        <div class="admin">
             <h2 class="title__sections">Panel Supervisor</h2>
-            <div class="supervisor-content shadow-card">
-                <div class="supervisor-content__cards">
+            <div class="admin-content shadow-card">
+                <div class="admin-content__cards">
                     <img src="./img/profile.jpg" alt="Perfil Supervisor">
-                    <h3 class="supervisor-content__title">Perfil Supervisor</h3>
-                    <p class="supervisor-content__parrafo">Consulta la información de tu perfil como supervisor.</p>
-                    <a class="global__button" href="./supervisorProfile.html">Mirar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/admin-listEvents.jpg" alt="Eventos Por Confirmar">
-                    <h3 class="supervisor-content__title">Eventos Por Confirmar</h3>
-                    <p class="supervisor-content__parrafo">Revisa y aprueba los eventos pendientes asignados.</p>
-                    <a class="global__button" href="./supervisorPendingEvents.html">Revisar</a>
-                </div>
-                <div class="supervisor-content__cards">
-                    <img src="./img/Aprobada.jpg" alt="Eventos Aprobados">
-                    <h3 class="supervisor-content__title">Eventos Aprobados</h3>
-                    <p class="supervisor-content__parrafo">Consulta los eventos que han sido aprobados.</p>
-                    <a class="global__button" href="./supervisorApprovedEvents.html">Listar</a>
-                </div>
-            </div>
-        </div>
-    </main>
+                    <h3 class="admin-content__title">Perfil Supervisor</h3>
+                    <p class="admin-content__parrafo">En este apartado, podrás ver y gestionar los datos de tu perfil como supervisor.</p>
+                    <a class="custom__button--a" href="./supervisorProfile.html">Mirar</a>
+                </div> <!--Fin admin-content__cards-->
 
+                <div class="admin-content__cards">
+                    <img src="./img/admin-listEvents.jpg" alt="Revisar Eventos Pendientes">
+                    <h3 class="admin-content__title">Revisar Eventos Pendientes</h3>
+                    <p class="admin-content__parrafo">Consulta aquí los eventos pendientes para su aprobación.</p>
+                    <a class="custom__button--a" href="./supervisorPendingEvents.html">Revisar</a>
+                </div> <!--Fin admin-content__cards-->
+
+                <div class="admin-content__cards">
+                    <img src="./img/Aprobada.jpg" alt="Ver Eventos Aprobados">
+                    <h3 class="admin-content__title">Ver Eventos Aprobados</h3>
+                    <p class="admin-content__parrafo">Consulta los eventos que han sido aprobados como supervisor.</p>
+                    <a class="custom__button--a" href="./supervisorApprovedEvents.html">Ver</a>
+                </div> <!--Fin admin-content__cards-->
+            </div> <!--Fin admin-content-->
+        </div> <!--Fin admin-->
+    </main> 
     <footer class="footer">
         <div class="footer__logo">
             <a href="./index.html">
@@ -218,10 +65,10 @@
             </div>
         </div>
         <nav class="footer__navbar">
-            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="/index.html" class="footer__links ">Nosotros</a>
             <a href="#" class="footer__links">Contacto</a>
             <a href="#" class="footer__links">Términos y condiciones</a>
-            <a href="#" class="footer__links">Política de cookies</a>
+            <a href="#" class="footer__links">Política cookies</a>
         </nav>
     </footer>
 

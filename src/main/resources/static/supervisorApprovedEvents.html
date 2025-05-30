@@ -14,152 +14,9 @@
     <link rel="stylesheet" href="./css/admin.css">
     <title>Zénit Eventos - Eventos Aprobados</title>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #1C2526;
-            color: white;
-        }
-        main {
-            flex: 1 0 auto;
-        }
-        main.contenedor {
-            margin-top: 100px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 15px;
-        }
-        .header {
-            background-color: #1C2526;
-            padding: 1rem;
-            border-bottom: 1px solid #3A4445;
-        }
-        .header__logo {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header__title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header__navbar a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .header__navbar a:hover {
-            color: #00C4B4;
-        }
-        .supervisor {
-            margin-bottom: 2rem;
-        }
-        .title__sections {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .eventos-table-container {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            color: white;
-        }
-        .table thead {
-            background-color: #1C2526;
-        }
-        .table th {
-            padding: 12px;
-            text-align: left;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            color: white;
-            border-bottom: 2px solid #4A5556;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-        .table td {
-            padding: 12px;
-            font-family: 'Open Sans', sans-serif;
-            border-bottom: 1px solid #4A5556;
-            vertical-align: middle;
-            font-size: 0.85rem;
-        }
-        .table tbody tr:hover {
-            background-color: #4A5556;
-        }
-        .global__button {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            margin: 2rem auto 0;
-            display: block;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .global__button:hover {
-            background-color: #009688;
-            border-color: #009688;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .footer {
-            background-color: #1C2526;
-            padding: 2rem;
-            border-top: 1px solid #3A4445;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .footer__logo {
-            margin-bottom: 1rem;
-        }
-        .footer__logo img {
-            width: 100px;
-        }
-        .footer__social a {
-            color: white;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .footer__social a:hover {
-            color: #00C4B4;
-        }
-        .footer__navbar {
-            margin-top: 1rem;
-        }
-        .footer__links {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        .footer__links:hover {
-            color: #00C4B4;
+        /* Estilo estático para el color del texto en las celdas de la tabla */
+        .table td, th {
+            color: #FFFFFF; /* Texto blanco para resaltar */
         }
     </style>
 </head>
@@ -169,16 +26,16 @@
             <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
-                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
+                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Panel Supervisor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
 
     <main class="contenedor">
-        <div class="supervisor">
+        <div class="admin">
             <h2 class="title__sections">Eventos Aprobados</h2>
-            <div class="eventos-table-container">
+            <div class="admin-create shadow-card">
                 <table class="table">
                     <thead>
                         <tr>
@@ -189,36 +46,17 @@
                     </thead>
                     <tbody id="approvedEventsBody"></tbody>
                 </table>
+                <a class="custom__button--a" href="/supervisor.html">Volver al Panel</a>
             </div>
-            <a class="global__button" href="/supervisor.html">Volver al Panel</a>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer__logo">
-            <a href="./index.html">
-                <img src="./img/logo1.png" alt="LogoZénit">
-            </a>
-            <div class="footer__social">
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-        </div>
-        <nav class="footer__navbar">
-            <a href="/index.html" class="footer__links">Nosotros</a>
-            <a href="#" class="footer__links">Contacto</a>
-            <a href="#" class="footer__links">Términos y condiciones</a>
-            <a href="#" class="footer__links">Política de cookies</a>
-        </nav>
-    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script>
-        const API_URL = 'http://localhost:8092/rest/eventos';
-        const SUPERVISOR_CORREO = 'supervisor@zenit.com';
+        const API_URL = 'http://localhost:8092/rest/supervisores/eventos';
 
         async function loadApprovedEvents() {
             try {
@@ -236,7 +74,8 @@
                 const approvedEventsBody = document.getElementById('approvedEventsBody');
                 approvedEventsBody.innerHTML = '';
 
-                const approvedEvents = events.filter(event => (event.estadoAprobacion || 'PENDIENTE') === 'APROBADO');
+                // Filtrar eventos con estado "Aprobado"
+                const approvedEvents = events.filter(event => (event.estadoAprobacion || 'Pendiente') === 'Aprobado');
 
                 if (approvedEvents.length === 0) {
                     approvedEventsBody.innerHTML = '<tr><td colspan="3" class="text-center">No hay eventos aprobados.</td></tr>';
@@ -247,8 +86,8 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${event.nombreEvento || 'Sin nombre'}</td>
-                        <td>${new Date(event.fecha).toLocaleDateString()}</td>
-                        <td>${event.estadoAprobacion || 'PENDIENTE'}</td>
+                        <td>${event.fecha ? new Date(event.fecha).toLocaleDateString() : 'Sin fecha'}</td>
+                        <td>${event.estadoAprobacion || 'Pendiente'}</td>
                     `;
                     approvedEventsBody.appendChild(row);
                 });

@@ -7,176 +7,12 @@
     <meta name="Description" content="Zénit Eventos - Perfil Proveedor"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/admin.css">
+    <link rel="stylesheet" href="./css/invitado.css">
     <title>Zénit Eventos - Perfil Proveedor</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #1C2526;
-            color: white;
-        }
-        main {
-            flex: 1 0 auto;
-        }
-        main.contenedor {
-            margin-top: 100px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 15px;
-        }
-        .header {
-            background-color: #1C2526;
-            padding: 1rem;
-            border-bottom: 1px solid #3A4445;
-        }
-        .header__logo {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header__title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header__navbar a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .header__navbar a:hover {
-            color: #00C4B4;
-        }
-        .proveedor {
-            margin-bottom: 2rem;
-        }
-        .title__sections {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .proveedor-profile {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 400px;
-            text-align: center;
-        }
-        .proveedor-profile__img {
-            width: 150px;
-            height: auto;
-            display: block;
-            margin: 0 auto 2rem;
-            border-radius: 10px;
-            object-fit: cover;
-        }
-        .proveedor-profile__title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #00C4B4;
-            margin-bottom: 0.5rem;
-        }
-        .proveedor-profile__descripcion {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            text-align: justify;
-            margin-bottom: 1.5rem;
-            padding: 0 1rem;
-        }
-        .proveedor-profile__eventos-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #00C4B4;
-            margin-bottom: 0.75rem;
-        }
-        .list-group-item {
-            background-color: #4A5556;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-            padding: 0.75rem;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-        .global__button {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            margin: 1rem auto 0;
-            display: block;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .global__button:hover {
-            background-color: #009688;
-            border-color: #009688;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .footer {
-            background-color: #1C2526;
-            padding: 2rem;
-            border-top: 1px solid #3A4445;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .footer__logo {
-            margin-bottom: 1rem;
-        }
-        .footer__logo img {
-            width: 100px;
-        }
-        .footer__social a {
-            color: white;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .footer__social a:hover {
-            color: #00C4B4;
-        }
-        .footer__navbar {
-            margin-top: 1rem;
-        }
-        .footer__links {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        .footer__links:hover {
-            color: #00C4B4;
-        }
-    </style>
 </head>
 <body>
     <header class="header">
@@ -184,88 +20,169 @@
             <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
-                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Panel Proveedor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
 
     <main class="contenedor">
-        <div class="proveedor">
+        <div class="admin">
             <h2 class="title__sections">Perfil del Proveedor</h2>
-            <div class="proveedor-profile">
-                <img src="./img/profile.jpg" alt="Perfil Proveedor" class="proveedor-profile__img">
-                <h3 class="proveedor-profile__title">Sobre Mí</h3>
-                <p id="sobreMi" class="proveedor-profile__descripcion">
-                    <i class="fas fa-star" style="color: #00C4B4; margin-right: 0.5rem;"></i>
-                    Cargando...
-                </p>
-                <h3 class="proveedor-profile__eventos-title">Eventos Realizados</h3>
-                <ul id="eventosRealizadosList" class="list-group">
-                    <li class="list-group-item">Cargando...</li>
-                </ul>
-                <a class="global__button" href="/proveedor.html">Volver al Panel</a>
+            <div class="admin-create shadow-card">
+                <h3 class="admin-create__title">Perfil del Proveedor</h3>
+                <img id="profileImage" class="admin-profile__img" src="./img/profile.jpg" alt="Perfil Proveedor">
+
+                <label for="proveedorNombre" class="admin-create__label">Nombre Completo <i class="fa-solid fa-users-rectangle"></i></label>
+                <input type="text" id="proveedorNombre" class="admin-create__input" readonly>
+
+                <label for="proveedorCorreo" class="admin-create__label">Correo Electrónico <i class="fa-solid fa-envelope"></i></label>
+                <input type="email" id="proveedorCorreo" class="admin-create__input" readonly>
+
+                <div class="upload-section">
+                    <label for="imagen" class="admin-create__label">Cambiar Imagen de Perfil <i class="fa-solid fa-image"></i></label>
+                    <input type="file" id="imagen" name="imagen" accept="image/*">
+                </div>
+
+                <button class="custom__button--a" type="button" id="saveImageButton">Guardar Cambios</button>
+				<br><br>
+                <a class="custom__button--a" href="/proveedor.html">Volver al Panel</a>
             </div>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer__logo">
-            <a href="./index.html">
-                <img src="./img/logo1.png" alt="LogoZénit">
-            </a>
-            <div class="footer__social">
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-        </div>
-        <nav class="footer__navbar">
-            <a href="/index.html" class="footer__links">Nosotros</a>
-            <a href="#" class="footer__links">Contacto</a>
-            <a href="#" class="footer__links">Términos y condiciones</a>
-            <a href="#" class="footer__links">Política de cookies</a>
-        </nav>
-    </footer>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script>
-        const API_URL = 'http://localhost:8092/rest/proveedores';
-        const PROVEEDOR_CORREO = 'katherine@gmail.com';
+		async function loadProveedorProfile() {
+		    try {
+		        const response = await fetch('/rest/proveedores/profile', {
+		            method: 'GET',
+		            credentials: 'include',
+		            headers: {
+		                'Content-Type': 'application/json',
+		                'Cache-Control': 'no-cache'
+		            }
+		        });
 
-        async function loadPerfil() {
-            try {
-                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}`);
-                const proveedor = await response.json();
-                const sobreMi = document.getElementById('sobreMi');
-                const eventosRealizadosList = document.getElementById('eventosRealizadosList');
+		        if (!response.ok) {
+		            const errorData = await response.json();
+		            throw new Error(errorData.message || `Error al obtener el perfil: ${response.status} - ${response.statusText}`);
+		        }
 
-                // Descripción más llamativa con formato
-                sobreMi.innerHTML = `
-                    <i class="fas fa-star" style="color: #00C4B4; margin-right: 0.5rem;"></i>
-                    ${proveedor.descripcion || '¡Transformamos tus eventos en experiencias inolvidables! Somos especialistas en ofrecer soluciones personalizadas, con pasión por los detalles y compromiso con la excelencia. Confía en nosotros para hacer realidad tus ideas.'}
-                `;
+		        const profile = await response.json();
+		        console.log('Datos recibidos del servidor:', profile);
 
-                eventosRealizadosList.innerHTML = '';
-                if (proveedor.eventosRealizados && proveedor.eventosRealizados.length > 0) {
-                    proveedor.eventosRealizados.forEach(evento => {
-                        const li = document.createElement('li');
-                        li.className = 'list-group-item';
-                        li.textContent = evento;
-                        eventosRealizadosList.appendChild(li);
-                    });
-                } else {
-                    eventosRealizadosList.innerHTML = '<li class="list-group-item">No hay eventos realizados</li>';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar el perfil');
-            }
-        }
+		        if (profile.role && profile.role !== 'PROVEEDOR') {
+		            throw new Error('Rol no válido o no autorizado para este perfil.');
+		        }
 
-        window.onload = loadPerfil;
+		        document.getElementById('proveedorNombre').value = profile.nombre || 'N/A';
+		        document.getElementById('proveedorCorreo').value = profile.correo || 'N/A';
+		        const profileImage = document.getElementById('profileImage');
+		        if (profile.imagenUrl) {
+		            profileImage.src = profile.imagenUrl;
+		        } else {
+		            console.log('No se encontró imagenUrl, usando imagen por defecto');
+		        }
+		    } catch (error) {
+		        console.error('Error al cargar el perfil del proveedor:', error.message);
+		        alert('No se pudo cargar el perfil. Detalles: ' + error.message + '\nPor favor, revisa la consola para más información.');
+		    }
+		}
+
+		document.getElementById('saveImageButton').addEventListener('click', async () => {
+		    const imagenInput = document.getElementById('imagen');
+		    const imagen = imagenInput.files[0];
+
+		    if (!imagen) {
+		        alert('Por favor, selecciona una imagen para subir.');
+		        return;
+		    }
+
+		    const formData = new FormData();
+		    formData.append('imagen', imagen);
+
+		    try {
+		        const response = await fetch('/rest/proveedores/profile/image', {
+		            method: 'PUT',
+		            credentials: 'include',
+		            body: formData
+		        });
+
+		        // Depuración: Mostrar el código de estado
+		        console.log('Código de estado:', response.status);
+
+		        // Manejar redirecciones (por ejemplo, a una página de login)
+		        if (response.status === 302 || response.redirected) {
+		            alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
+		            window.location.href = '/index.html'; // Redirigir al login
+		            return;
+		        }
+
+		        // Obtener el texto de la respuesta
+		        const responseText = await response.text();
+		        console.log('Respuesta cruda del servidor:', responseText);
+
+		        // Intentar parsear como JSON
+		        let result = {};
+		        if (responseText) {
+		            try {
+		                result = JSON.parse(responseText);
+		            } catch (jsonError) {
+		                console.error('Error al parsear JSON:', jsonError);
+		                if (response.status === 401) {
+		                    alert('No estás autenticado. Por favor, inicia sesión.');
+		                    window.location.href = '/index.html';
+		                    return;
+		                } else {
+		                    alert('Error del servidor: La respuesta no es un JSON válido.');
+		                    return;
+		                }
+		            }
+		        } else {
+		            // Respuesta vacía
+		            if (response.status === 401) {
+		                alert('No estás autenticado. Por favor, inicia sesión.');
+		                window.location.href = '/index.html';
+		                return;
+		            } else {
+		                alert('Error del servidor: Respuesta vacía.');
+		                return;
+		            }
+		        }
+
+		        if (response.ok) {
+		            alert(result.message || 'Imagen actualizada exitosamente.');
+		            const profileImage = document.getElementById('profileImage');
+		            if (result.imagenUrl) {
+		                profileImage.src = result.imagenUrl;
+		            }
+		            imagenInput.value = '';
+		        } else {
+		            if (response.status === 401) {
+		                alert('No estás autenticado. Por favor, inicia sesión.');
+		                window.location.href = '/index.html';
+		            } else if (response.status === 404) {
+		                alert('Proveedor no encontrado.');
+		            } else if (response.status === 400) {
+		                alert(result.message || 'Solicitud inválida.');
+		            } else if (response.status === 500) {
+		                alert(result.message || 'Error en el servidor al subir la imagen.');
+		            } else {
+		                alert(result.message || 'Error al actualizar la imagen.');
+		            }
+		        }
+		    } catch (error) {
+		        console.error('Error al enviar la imagen:', error);
+		        alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
+		    }
+		});
+
+        window.onload = loadProveedorProfile;
     </script>
 </body>
 </html>

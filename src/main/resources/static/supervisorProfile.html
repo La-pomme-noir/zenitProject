@@ -13,168 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
     <title>Zénit Eventos - Perfil Supervisor</title>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            font-family: 'Montserrat', sans-serif;
-            background-color: #1C2526;
-            color: white;
-        }
-        main {
-            flex: 1 0 auto;
-        }
-        main.contenedor {
-            margin-top: 100px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 0 15px;
-        }
-        .header {
-            background-color: #1C2526;
-            padding: 1rem;
-            border-bottom: 1px solid #3A4445;
-        }
-        .header__logo {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header__title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header__navbar a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .header__navbar a:hover {
-            color: #00C4B4;
-        }
-        .supervisor {
-            margin-bottom: 2rem;
-        }
-        .title__sections {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .supervisor-profile {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            max-width: 600px;
-            margin: 0 auto;
-            min-height: 350px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .supervisor-profile img {
-            width: 100%;
-            max-width: 200px;
-            height: auto;
-            border-radius: 10px;
-            margin: 0 auto 1rem;
-            display: block;
-        }
-        .supervisor-profile h3 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #00C4B4;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .supervisor-profile p {
-            font-size: 0.9rem;
-            color: #B0B0B0;
-            font-family: 'Open Sans', sans-serif;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        .supervisor-profile ul {
-            list-style: none;
-            padding: 0;
-            margin-bottom: 2rem;
-        }
-        .supervisor-profile ul li {
-            background-color: #4A5556;
-            color: white;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            font-family: 'Open Sans', sans-serif;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-        .global__button {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            color: white;
-            font-weight: bold;
-            text-decoration: none;
-            text-transform: uppercase;
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto;
-            display: block;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-        .global__button:hover {
-            background-color: #009688;
-            border-color: #009688;
-            color: white;
-            transform: translateY(-2px);
-        }
-        .footer {
-            background-color: #1C2526;
-            padding: 2rem;
-            border-top: 1px solid #3A4445;
-            text-align: center;
-            flex-shrink: 0;
-        }
-        .footer__logo {
-            margin-bottom: 1rem;
-        }
-        .footer__logo img {
-            width: 100px;
-        }
-        .footer__social a {
-            color: white;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .footer__social a:hover {
-            color: #00C4B4;
-        }
-        .footer__navbar {
-            margin-top: 1rem;
-        }
-        .footer__links {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        .footer__links:hover {
-            color: #00C4B4;
-        }
-    </style>
 </head>
 <body>
     <header class="header">
@@ -182,51 +20,71 @@
             <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
-                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Supervisor</a>
+                <a href="/supervisor.html" class="navbar__links navbar__links--activo">Panel Supervisor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
 
     <main class="contenedor">
-        <div class="supervisor">
+        <div class="admin">
             <h2 class="title__sections">Perfil Supervisor</h2>
-            <div class="supervisor-profile">
-                <img src="./img/profile.jpg" alt="Perfil Supervisor">
-                <h3>Sobre Mí</h3>
-                <p>Soy un supervisor encargado de supervisar y aprobar los eventos de Zénit Eventos. Mi rol es garantizar que todos los eventos cumplan con los estándares establecidos y se ejecuten sin inconvenientes.</p>
-                <h3>Información</h3>
-                <ul>
-                    <li>Nombre: Esteban Supervisor</li>
-                    <li>Rol: Supervisor</li>
-                    <li>Correo: Esteban@gmail.com</li>
-                </ul>
-                <a class="global__button" href="/supervisor.html">Volver al Panel</a>
+            <div class="admin-create shadow-card">
+                <h3 class="admin-create__title">
+                    Perfil del Supervisor
+                </h3>
+
+                <img class="admin-profile__img" src="./img/profile.jpg" alt="Icon Profile Supervisor">
+
+                <label for="supervisorNombre" class="admin-create__label">Nombre Completo <i class="fa-solid fa-users-rectangle"></i></label>
+                <input type="text" id="supervisorNombre" class="admin-create__input" readonly>
+
+                <label for="supervisorCorreo" class="admin-create__label">Correo Electrónico <i class="fa-solid fa-envelope"></i></label>
+                <input type="email" id="supervisorCorreo" class="admin-create__input" readonly>
+
             </div>
         </div>
     </main>
 
-    <footer class="footer">
-        <div class="footer__logo">
-            <a href="./index.html">
-                <img src="./img/logo1.png" alt="LogoZénit">
-            </a>
-            <div class="footer__social">
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            </div>
-        </div>
-        <nav class="footer__navbar">
-            <a href="/index.html" class="footer__links">Nosotros</a>
-            <a href="#" class="footer__links">Contacto</a>
-            <a href="#" class="footer__links">Términos y condiciones</a>
-            <a href="#" class="footer__links">Política de cookies</a>
-        </nav>
-    </footer>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
+	<script>
+	    async function loadSupervisorProfile() {
+	        try {
+	            const response = await fetch('/api/supervisores/profile', {
+	                method: 'GET',
+	                credentials: 'include',
+	                headers: {
+	                    'Content-Type': 'application/json',
+	                },
+	            });
+
+	            if (!response.ok) {
+	                const errorData = await response.json();
+	                throw new Error(errorData.message || `Error al obtener el perfil: ${response.status} - ${response.statusText}`);
+	            }
+
+	            const profile = await response.json();
+	            console.log('Datos recibidos del servidor:', profile);
+
+	            // Verificar el rol del usuario (opcional, dependiendo de tu configuración)
+	            if (profile.role && profile.role !== 'SUPERVISOR') {
+	                throw new Error('Rol no válido o no autorizado para este perfil.');
+	            }
+
+	            // Rellenar los campos con los datos del perfil del supervisor
+	            document.getElementById('supervisorNombre').value = profile.nombre || 'N/A';
+	            document.getElementById('supervisorCorreo').value = profile.correo || 'N/A';
+	        } catch (error) {
+	            console.error('Error al cargar el perfil del supervisor:', error.message);
+	            alert('No se pudo cargar el perfil. Detalles: ' + error.message + '\nPor favor, revisa la consola para más información.');
+	        }
+	    }
+
+	    // Cargar el perfil al iniciar la página
+	    window.onload = loadSupervisorProfile;
+	</script>
 </body>
 </html>

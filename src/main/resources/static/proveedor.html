@@ -4,140 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="Description" content="Zénit Eventos Proveedor"/>
+    <meta name="Description" content="Zénit Eventos - Panel Proveedor"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/admin.css">
-    <title>Zénit Eventos Proveedor</title>
-    <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #1C2526;
-            color: white;
-        }
-        .header {
-            background-color: #1C2526;
-            padding: 1rem;
-            border-bottom: 1px solid #3A4445;
-        }
-        .header__logo {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .header__title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        .header__navbar a {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-            font-size: 1.1rem;
-        }
-        .header__navbar a:hover {
-            color: #00C4B4;
-        }
-        .contenedor {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 15px;
-        }
-        .proveedor {
-            margin-bottom: 3rem;
-        }
-        .title__sections {
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-        .proveedor-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2rem;
-            justify-content: center;
-        }
-        .proveedor-content__cards {
-            background-color: #3A4445;
-            border-radius: 10px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 350px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        .proveedor-content__cards:hover {
-            transform: translateY(-5px);
-        }
-        .proveedor-content__cards img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-        .proveedor-content__title {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        .proveedor-content__parrafo {
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-            color: #B0B0B0;
-        }
-        .global__button {
-            background-color: #00C4B4;
-            border-color: #00C4B4;
-            border-radius: 20px;
-            padding: 0.5rem 2rem;
-            color: white;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .global__button:hover {
-            background-color: #009688;
-            border-color: #009688;
-            color: white;
-        }
-        .shadow-card {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .footer {
-            background-color: #1C2526;
-            padding: 2rem;
-            border-top: 1px solid #3A4445;
-            text-align: center;
-        }
-        .footer__logo {
-            margin-bottom: 1rem;
-        }
-        .footer__logo img {
-            width: 100px;
-        }
-        .footer__social a {
-            color: white;
-            margin: 0 0.5rem;
-            font-size: 1.2rem;
-        }
-        .footer__social a:hover {
-            color: #00C4B4;
-        }
-        .footer__navbar {
-            margin-top: 1rem;
-        }
-        .footer__links {
-            color: white;
-            margin: 0 1rem;
-            text-decoration: none;
-        }
-        .footer__links:hover {
-            color: #00C4B4;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/invitado.css"> <!-- Mismo archivo CSS que supervisor.html -->
+    <title>Zénit Eventos - Panel Proveedor</title>
 </head>
 <body>
     <header class="header">
@@ -145,61 +20,61 @@
             <a href="./index.html"><img src="./img/logo1.png" alt="LogoZénit"></a>
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
-                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Administrador</a>
+                <a href="/proveedor.html" class="navbar__links navbar__links--activo">Panel Proveedor</a>
                 <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
             </nav>
-        </div>
-    </header>
+        </div> <!--Fin header__logo-->
+    </header> <!--Fin Header-->
 
     <main class="contenedor">
-        <div class="proveedor">
+        <div class="admin">
             <h2 class="title__sections">Panel Proveedor</h2>
-            <div class="proveedor-content shadow-card">
+            <div class="admin-content shadow-card">
                 <!-- Perfil del Proveedor -->
-                <div class="proveedor-content__cards">
+                <div class="admin-content__cards">
                     <img src="./img/profile.jpg" alt="Perfil Proveedor">
-                    <h3 class="proveedor-content__title">Perfil del Proveedor</h3>
-                    <p class="proveedor-content__parrafo">Consulta y edita la información de tu perfil como proveedor.</p>
-                    <a class="global__button" href="./proveedorProfile.html">Ver Perfil</a>
-                </div>
+                    <h3 class="admin-content__title">Perfil del Proveedor</h3>
+                    <p class="admin-content__parrafo">Consulta y edita la información de tu perfil como proveedor.</p>
+                    <a class="custom__button--a" href="./proveedorProfile.html">Mirar</a>
+                </div> <!--Fin admin-content__cards-->
 
                 <!-- Gestión de Categorías y Servicios -->
-                <div class="proveedor-content__cards">
-                    <img src="./img/admin-listEvents.jpg" alt="Servicios">
-                    <h3 class="proveedor-content__title">Gestionar Servicios</h3>
-                    <p class="proveedor-content__parrafo">Administra las categorías y servicios que ofreces.</p>
-                    <a class="global__button" href="./proveedorServicios.html">Gestionar</a>
-                </div>
+                <div class="admin-content__cards">
+                    <img src="./img/admin-listEvents.jpg" alt="Gestionar Servicios">
+                    <h3 class="admin-content__title">Gestionar Servicios</h3>
+                    <p class="admin-content__parrafo">Administra las categorías y servicios que ofreces.</p>
+                    <a class="custom__button--a" href="./proveedorServicios.html">Gestionar</a>
+                </div> <!--Fin admin-content__cards-->
 
                 <!-- Eventos Asignados -->
-                <div class="proveedor-content__cards">
+                <div class="admin-content__cards">
                     <img src="./img/admin-listEvents.jpg" alt="Eventos Asignados">
-                    <h3 class="proveedor-content__title">Eventos Asignados</h3>
-                    <p class="proveedor-content__parrafo">Revisa los eventos asignados y gestiona tu participación.</p>
-                    <a class="global__button" href="./proveedorEventos.html">Ver Eventos</a>
-                </div>
+                    <h3 class="admin-content__title">Eventos Asignados</h3>
+                    <p class="admin-content__parrafo">Revisa los eventos asignados y gestiona tu participación.</p>
+                    <a class="custom__button--a" href="./proveedorEventos.html">Ver Eventos</a>
+                </div> <!--Fin admin-content__cards-->
+            </div> <!--Fin admin-content-->
+        </div> <!--Fin admin-->
+    </main> 
+    <footer class="footer">
+        <div class="footer__logo">
+            <a href="./index.html">
+                <img src="./img/logo1.png" alt="LogoZénit">
+            </a>
+            <div class="footer__social">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
             </div>
         </div>
-    </main>
+        <nav class="footer__navbar">
+            <a href="/index.html" class="footer__links">Nosotros</a>
+            <a href="#" class="footer__links">Contacto</a>
+            <a href="#" class="footer__links">Términos y Condiciones</a>
+            <a href="#" class="footer__links">Política de Cookies</a>
+        </nav>
+    </footer>
 
-	<footer class="footer">
-				    <div class="footer__logo">
-				        <a href="./index.html">
-				            <img src="./img/logo1.png" alt="LogoZénit">
-				        </a>
-				        <div class="footer__social">
-				            <a href="#"><i class="fab fa-twitter"></i></a>
-				            <a href="#"><i class="fab fa-facebook-f"></i></a>
-				            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-				        </div>
-				    </div>
-				    <nav class="footer__navbar">
-				        <a href="/index.html" class="footer__links ">Nosotros</a>
-				        <a href="#" class="footer__links">Contacto</a>
-				        <a href="#" class="footer__links">Terminos y condiciones</a>
-				        <a href="#" class="footer__links">Politica cookies</a>
-				    </nav>
-				</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
