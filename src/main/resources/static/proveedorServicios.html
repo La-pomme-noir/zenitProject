@@ -20,7 +20,7 @@
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
                 <a href="/proveedor.html" class="navbar__links navbar__links--activo">Proveedor</a>
-                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+                <a href="/logout" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
@@ -48,8 +48,7 @@
                         <textarea class="form-textarea" id="descripcion" placeholder="Escribe una breve descripción del servicio" required></textarea>
                     </div>
                     <div class="button-group">
-                        <button type="submit" class="global__button" id="submitButton">Agregar</button>
-                        <button type="button" class="global__button edit-button" id="editButton" style="display: none;">Editar</button>
+                        <button type="submit" class="global__button" id="saveButton">Guardar</button>
                     </div>
                 </form>
                 <div class="registered-service">
@@ -65,12 +64,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script>
-        const API_URL = 'http://localhost:8092/rest/proveedores';
-        const PROVEEDOR_CORREO = 'katherine@gmail.com';
-
         async function loadServicios() {
             try {
-                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}`);
+                // Obtener el perfil del proveedor autenticado para obtener el correo
+                const profileResponse = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!profileResponse.ok) throw new Error('No autenticado o perfil no encontrado');
+                const profile = await profileResponse.json();
+                const correo = profile.correo;
+
+                // Cargar los datos del proveedor
+                const response = await fetch(`/rest/proveedores/correo/${correo}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
                 if (!response.ok) {
                     const errorData = await response.json();
                     throw new Error(errorData.message || 'Error al cargar el servicio');
@@ -90,14 +107,10 @@
                         </ul>
                     `;
                     serviciosList.appendChild(div);
-                    document.getElementById('submitButton').style.display = 'none';
-                    document.getElementById('editButton').style.display = 'block';
                     document.getElementById('categoria').value = proveedor.servicioCategoria || '';
                     document.getElementById('descripcion').value = proveedor.servicioDescripcion || '';
                 } else {
                     serviciosList.innerHTML = '<p>No hay servicio registrado</p>';
-                    document.getElementById('submitButton').style.display = 'block';
-                    document.getElementById('editButton').style.display = 'none';
                     document.getElementById('categoria').value = '';
                     document.getElementById('descripcion').value = '';
                 }
@@ -118,48 +131,49 @@
             }
 
             try {
-                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}/servicio`, {
+                // Obtener el correo del proveedor autenticado
+                const profileResponse = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!profileResponse.ok) throw new Error('No autenticado');
+                const profile = await profileResponse.json();
+                const correo = profile.correo;
+
+                // Enviar los datos del servicio
+                const response = await fetch(`/rest/proveedores/correo/${correo}/servicio`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({ categoria, descripcion })
                 });
 
-                if (response.ok) {
-                    alert('Servicio agregado exitosamente');
-                    document.getElementById('servicioForm').reset();
-                    loadServicios();
-                } else {
-                    const errorData = await response.json();
-                    alert(errorData.message || 'Error al agregar el servicio');
+                const responseText = await response.text();
+                let result;
+                try {
+                    result = responseText ? JSON.parse(responseText) : {};
+                } catch (jsonError) {
+                    throw new Error('Respuesta del servidor no es un JSON válido');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error en la conexión con el servidor: ' + error.message);
-            }
-        });
-
-        document.getElementById('editButton').addEventListener('click', async () => {
-            const categoria = document.getElementById('categoria').value;
-            const descripcion = document.getElementById('descripcion').value;
-
-            if (!categoria || !descripcion) {
-                alert('Por favor, completa todos los campos.');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_URL}/correo/${PROVEEDOR_CORREO}/servicio`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ categoria, descripcion })
-                });
 
                 if (response.ok) {
-                    alert('Servicio actualizado exitosamente');
+                    alert(result.message || 'Servicio guardado exitosamente');
                     loadServicios();
                 } else {
-                    const errorData = await response.json();
-                    alert(errorData.message || 'Error al actualizar el servicio');
+                    if (response.status === 401) {
+                        alert('No estás autenticado. Por favor, inicia sesión.');
+                        window.location.href = '/index.html';
+                    } else if (response.status === 403) {
+                        alert('No autorizado para realizar esta acción.');
+                    } else {
+                        alert(result.message || 'Error al guardar el servicio');
+                    }
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -170,7 +184,6 @@
         window.onload = loadServicios;
     </script>
     <style>
-        /* Estilos específicos para la sección "Gestionar Servicios" */
         .proveedor-servicios {
             display: flex;
             flex-direction: column;
@@ -213,9 +226,10 @@
         #serviciosList .list-group-item {
             padding: 5px 0;
         }
-		.form-label {
-			color: #000000;
-		}
+
+        .form-label {
+            color: #000000;
+        }
     </style>
 </body>
 </html>

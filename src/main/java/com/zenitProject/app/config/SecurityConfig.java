@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin.html", "/adminProfile.html", "/adminCreate.html", "/adminList.html", "/api/admins/**", "/rest/admins/**").hasRole("ADMIN")
                 .requestMatchers("/rest/organizadores/**", "/rest/invitados/**", "/rest/proveedores/**", "/rest/supervisores/**").authenticated()
                 .requestMatchers("/invitado.html", "/acceptedEvents.html", "/checkInvitations.html").hasRole("INVITADO") // Corrección de typos y rutas
+                .requestMatchers("/proveedorProfile.html", "/api/proveedores**", "/proveedorServicios.html", "/proveedorEventos.html").hasRole("PROVEEDOR")
                 .requestMatchers("/api/clientes/profile", "/api/clientes/register-event", "/api/clientes/cancel-event/**", "/api/clientes/registered-events", "/clienteEventos.html", "/clienteMoreEventos.html", "/paymentForm.html", "/confirmation.html").hasRole("CLIENTE")
                 .anyRequest().authenticated()
             )

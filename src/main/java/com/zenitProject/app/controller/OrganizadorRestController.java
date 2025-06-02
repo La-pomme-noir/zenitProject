@@ -34,6 +34,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/rest/organizadores")
@@ -84,7 +85,7 @@ public class OrganizadorRestController {
     }
     
     @GetMapping("/eventos")
-    public ResponseEntity<List<Evento>> getEventosByOrganizador(Authentication authentication) {
+    public ResponseEntity<List<Map<String, Object>>> getEventosByOrganizador(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(401).body(new ArrayList<>());
         }
@@ -96,7 +97,49 @@ public class OrganizadorRestController {
         }
 
         List<Evento> eventos = eventoRepository.findByOrganizadorId(organizador.getId());
-        return ResponseEntity.ok(eventos);
+        List<Map<String, Object>> eventosResponse = eventos.stream().map(evento -> {
+            Map<String, Object> eventoMap = new HashMap<>();
+            eventoMap.put("id", evento.getId());
+            eventoMap.put("nombreEvento", evento.getNombreEvento());
+            eventoMap.put("fecha", evento.getFecha());
+            eventoMap.put("lugar", evento.getLugar());
+            eventoMap.put("organizadorNombre", evento.getOrganizadorNombre());
+            eventoMap.put("invitados", evento.getInvitados());
+            eventoMap.put("cantidadSillas", evento.getCantidadSillas());
+            eventoMap.put("hora", evento.getHora());
+            eventoMap.put("ciudad", evento.getCiudad());
+            eventoMap.put("descripcion", evento.getDescripcion());
+            eventoMap.put("requisitos", evento.getRequisitos());
+            eventoMap.put("estadoAprobacion", evento.getEstadoAprobacion());
+            eventoMap.put("imagenUrl", evento.getImagenUrl());
+            eventoMap.put("ubicacionesPrecios", evento.getUbicacionesPrecios());
+
+            Map<String, Map<String, String>> proveedoresTransformados = new HashMap<>();
+            if (evento.getProveedores() != null && !evento.getProveedores().isEmpty()) {
+                for (Map.Entry<String, String> entry : evento.getProveedores().entrySet()) {
+                    String proveedorId = entry.getKey();
+                    String categoria = entry.getValue();
+                    Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                    if (proveedorOpt.isPresent()) {
+                        Proveedor proveedor = proveedorOpt.get();
+                        Map<String, String> proveedorInfo = new HashMap<>();
+                        proveedorInfo.put("nombre", proveedor.getNombre() != null ? proveedor.getNombre() : "Sin nombre");
+                        proveedorInfo.put("categoria", categoria);
+                        proveedoresTransformados.put(proveedorId, proveedorInfo);
+                    } else {
+                        Map<String, String> proveedorInfo = new HashMap<>();
+                        proveedorInfo.put("nombre", "Proveedor no encontrado");
+                        proveedorInfo.put("categoria", categoria);
+                        proveedoresTransformados.put(proveedorId, proveedorInfo);
+                    }
+                }
+            }
+            eventoMap.put("proveedores", proveedoresTransformados);
+
+            return eventoMap;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(eventosResponse);
     }
     
     @GetMapping("/eventos/{id}")
@@ -151,6 +194,7 @@ public class OrganizadorRestController {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, Object> eventData = objectMapper.readValue(eventDataStr, new TypeReference<Map<String, Object>>() {});
+            System.out.println("Datos recibidos en eventData: " + eventData);
 
             Evento evento = new Evento();
             evento.setOrganizadorId(organizador.getId());
@@ -173,8 +217,40 @@ public class OrganizadorRestController {
 
             @SuppressWarnings("unchecked")
             Map<String, String> proveedores = (Map<String, String>) eventData.get("proveedores");
+            Map<String, String> proveedoresValidos = new HashMap<>();
+            List<String> proveedoresNoEncontrados = new ArrayList<>();
+            List<String> proveedoresInvalidos = new ArrayList<>();
+
+            // Expresión regular para validar IDs de MongoDB (24 caracteres hexadecimales)
+            Pattern mongoIdPattern = Pattern.compile("^[0-9a-fA-F]{24}$");
+
             if (proveedores != null && !proveedores.isEmpty()) {
-                evento.setProveedores(new HashMap<>(proveedores));
+                for (Map.Entry<String, String> entry : proveedores.entrySet()) {
+                    String proveedorId = entry.getKey();
+                    // Validar que el ID tenga el formato correcto
+                    if (!mongoIdPattern.matcher(proveedorId).matches()) {
+                        proveedoresInvalidos.add(proveedorId);
+                        System.out.println("ID de proveedor inválido (no es un ID de MongoDB): " + proveedorId);
+                        continue;
+                    }
+
+                    Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                    if (proveedorOpt.isPresent()) {
+                        Proveedor proveedor = proveedorOpt.get();
+                        // Validar que la categoría enviada coincida con la categoría del proveedor
+                        String categoriaEnviada = entry.getValue();
+                        if (categoriaEnviada != null && categoriaEnviada.equals(proveedor.getCategoria())) {
+                            proveedoresValidos.put(proveedorId, categoriaEnviada);
+                        } else {
+                            proveedoresNoEncontrados.add(proveedorId + " (categoría no coincide: esperada " + proveedor.getCategoria() + ", recibida " + categoriaEnviada + ")");
+                            System.out.println("Proveedor " + proveedorId + " encontrado, pero la categoría no coincide: esperada " + proveedor.getCategoria() + ", recibida " + categoriaEnviada);
+                        }
+                    } else {
+                        proveedoresNoEncontrados.add(proveedorId);
+                        System.out.println("Proveedor con ID " + proveedorId + " no encontrado al crear evento.");
+                    }
+                }
+                evento.setProveedores(proveedoresValidos);
             }
 
             @SuppressWarnings("unchecked")
@@ -199,23 +275,31 @@ public class OrganizadorRestController {
             }
 
             Evento savedEvento = eventoRepository.save(evento);
+            String eventoId = savedEvento.getId();
+            System.out.println("Evento creado con ID: " + eventoId);
 
             if (invitados != null && !invitados.isEmpty()) {
                 for (String invitadoId : invitados) {
                     Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
                     if (invitado != null) {
                         List<String> invitaciones = invitado.getInvitaciones();
-                        if (!invitaciones.contains(savedEvento.getId())) {
-                            invitaciones.add(savedEvento.getId());
+                        if (invitaciones == null) {
+                            invitaciones = new ArrayList<>();
+                        }
+                        if (!invitaciones.contains(eventoId)) {
+                            invitaciones.add(eventoId);
                             invitado.setInvitaciones(invitaciones);
                             invitadoRepository.save(invitado);
+                            System.out.println("Invitado " + invitadoId + " actualizado - Evento " + eventoId + " añadido a invitaciones.");
                         }
+                    } else {
+                        System.out.println("Invitado con ID " + invitadoId + " no encontrado.");
                     }
                 }
             }
 
-            if (proveedores != null && !proveedores.isEmpty()) {
-                for (String proveedorId : proveedores.keySet()) {
+            if (!proveedoresValidos.isEmpty()) {
+                for (String proveedorId : proveedoresValidos.keySet()) {
                     Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
                     if (proveedorOpt.isPresent()) {
                         Proveedor proveedor = proveedorOpt.get();
@@ -223,19 +307,28 @@ public class OrganizadorRestController {
                         if (pendientes == null) {
                             pendientes = new ArrayList<>();
                         }
-                        if (!pendientes.contains(savedEvento.getId())) {
-                            pendientes.add(savedEvento.getId());
+                        if (!pendientes.contains(eventoId)) {
+                            pendientes.add(eventoId);
                             proveedor.setEventosPendientes(pendientes);
                             proveedorRepository.save(proveedor);
+                            System.out.println("Proveedor " + proveedorId + " actualizado - Evento " + eventoId + " añadido a eventosPendientes: " + pendientes);
+                        } else {
+                            System.out.println("Evento " + eventoId + " ya está en eventosPendientes de proveedor " + proveedorId);
                         }
-                    } else {
-                        System.out.println("Proveedor con ID " + proveedorId + " no encontrado.");
                     }
                 }
             }
 
-            System.out.println("Evento guardado con imagenUrl: " + savedEvento.getImagenUrl());
-            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("message", "Evento creado exitosamente.", "evento", savedEvento));
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Evento creado exitosamente.");
+            response.put("evento", savedEvento);
+            if (!proveedoresInvalidos.isEmpty()) {
+                response.put("error", "IDs de proveedores inválidos (deben ser IDs de MongoDB): " + proveedoresInvalidos);
+            }
+            if (!proveedoresNoEncontrados.isEmpty()) {
+                response.put("warning", "Algunos proveedores no fueron encontrados o no coinciden con la categoría: " + proveedoresNoEncontrados);
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
@@ -321,6 +414,11 @@ public class OrganizadorRestController {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para editar este evento."));
                     }
 
+                    String estadoAprobacion = (String) eventData.get("estadoAprobacion");
+                    if (estadoAprobacion != null && !"Pendiente".equals(estadoAprobacion)) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "No puedes modificar proveedores de un evento que no está en estado Pendiente."));
+                    }
+
                     try {
                         // Actualizar los campos básicos del evento
                         evento.setNombreEvento((String) eventData.get("nombreEvento"));
@@ -331,11 +429,12 @@ public class OrganizadorRestController {
                         evento.setCantidadSillas((Integer) eventData.get("cantidadSillas"));
                         evento.setDescripcion((String) eventData.get("descripcion"));
                         evento.setRequisitos((String) eventData.get("requisitos"));
-                        evento.setEstadoAprobacion((String) eventData.get("estadoAprobacion"));
+                        evento.setEstadoAprobacion("Pendiente");
 
                         // Manejar invitados
                         @SuppressWarnings("unchecked")
                         List<String> newInvitados = (List<String>) eventData.get("invitados");
+                        List<String> invitadosNoEncontrados = new ArrayList<>();
                         if (newInvitados != null) {
                             List<String> oldInvitados = evento.getInvitados();
                             Set<String> newInvitadosSet = new HashSet<>(newInvitados);
@@ -353,8 +452,15 @@ public class OrganizadorRestController {
                             for (String invitadoId : invitadosEliminados) {
                                 Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
                                 if (invitado != null) {
-                                    invitado.getInvitaciones().remove(id);
-                                    invitadoRepository.save(invitado);
+                                    List<String> invitaciones = invitado.getInvitaciones();
+                                    if (invitaciones != null && invitaciones.contains(id)) {
+                                        invitaciones.remove(id);
+                                        invitado.setInvitaciones(invitaciones);
+                                        invitadoRepository.save(invitado);
+                                        System.out.println("Invitado " + invitadoId + " actualizado - Evento " + id + " eliminado de invitaciones.");
+                                    }
+                                } else {
+                                    System.out.println("Invitado " + invitadoId + " no encontrado al eliminar evento " + id);
                                 }
                             }
 
@@ -363,11 +469,18 @@ public class OrganizadorRestController {
                                 Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
                                 if (invitado != null) {
                                     List<String> invitaciones = invitado.getInvitaciones();
+                                    if (invitaciones == null) {
+                                        invitaciones = new ArrayList<>();
+                                    }
                                     if (!invitaciones.contains(id)) {
                                         invitaciones.add(id);
                                         invitado.setInvitaciones(invitaciones);
                                         invitadoRepository.save(invitado);
+                                        System.out.println("Invitado " + invitadoId + " actualizado - Evento " + id + " añadido a invitaciones.");
                                     }
+                                } else {
+                                    invitadosNoEncontrados.add(invitadoId);
+                                    System.out.println("Invitado " + invitadoId + " no encontrado al añadir evento " + id);
                                 }
                             }
 
@@ -377,9 +490,23 @@ public class OrganizadorRestController {
                         // Manejar proveedores
                         @SuppressWarnings("unchecked")
                         Map<String, String> newProveedores = (Map<String, String>) eventData.get("proveedores");
+                        Map<String, String> proveedoresValidos = new HashMap<>();
+                        List<String> proveedoresNoEncontrados = new ArrayList<>();
+
                         if (newProveedores != null) {
+                            for (Map.Entry<String, String> entry : newProveedores.entrySet()) {
+                                String proveedorId = entry.getKey();
+                                Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                                if (proveedorOpt.isPresent()) {
+                                    proveedoresValidos.put(proveedorId, entry.getValue());
+                                } else {
+                                    proveedoresNoEncontrados.add(proveedorId);
+                                    System.out.println("Proveedor " + proveedorId + " no encontrado al actualizar evento " + id);
+                                }
+                            }
+
                             Map<String, String> oldProveedores = evento.getProveedores();
-                            Set<String> newProveedoresSet = new HashSet<>(newProveedores.keySet());
+                            Set<String> newProveedoresSet = new HashSet<>(proveedoresValidos.keySet());
                             Set<String> oldProveedoresSet = oldProveedores != null ? new HashSet<>(oldProveedores.keySet()) : new HashSet<>();
 
                             // Proveedores eliminados
@@ -390,7 +517,6 @@ public class OrganizadorRestController {
                             Set<String> proveedoresAnadidos = new HashSet<>(newProveedoresSet);
                             proveedoresAnadidos.removeAll(oldProveedoresSet);
 
-                            // Depuración: Mostrar proveedores añadidos y eliminados
                             System.out.println("Evento ID: " + id);
                             System.out.println("Proveedores eliminados: " + proveedoresEliminados);
                             System.out.println("Proveedores añadidos: " + proveedoresAnadidos);
@@ -408,7 +534,7 @@ public class OrganizadorRestController {
                                         System.out.println("Proveedor " + proveedorId + " actualizado - Evento " + id + " eliminado de eventosPendientes: " + pendientes);
                                     }
                                 } else {
-                                    System.out.println("Proveedor " + proveedorId + " no encontrado al intentar eliminar evento " + id);
+                                    System.out.println("Proveedor " + proveedorId + " no encontrado al eliminar evento " + id);
                                 }
                             }
 
@@ -429,12 +555,10 @@ public class OrganizadorRestController {
                                     } else {
                                         System.out.println("Evento " + id + " ya está en eventosPendientes de proveedor " + proveedorId);
                                     }
-                                } else {
-                                    System.out.println("Proveedor " + proveedorId + " no encontrado al intentar añadir evento " + id);
                                 }
                             }
 
-                            evento.setProveedores(new HashMap<>(newProveedores));
+                            evento.setProveedores(proveedoresValidos);
                         }
 
                         // Manejar ubicaciones y precios
@@ -445,7 +569,16 @@ public class OrganizadorRestController {
                         }
 
                         Evento updatedEvento = eventoRepository.save(evento);
-                        return ResponseEntity.ok(updatedEvento);
+                        Map<String, Object> response = new HashMap<>();
+                        response.put("evento", updatedEvento);
+                        response.put("message", "Evento actualizado exitosamente.");
+                        if (!proveedoresNoEncontrados.isEmpty()) {
+                            response.put("warning", "Algunos proveedores no fueron encontrados: " + proveedoresNoEncontrados);
+                        }
+                        if (!invitadosNoEncontrados.isEmpty()) {
+                            response.put("warningInvitados", "Algunos invitados no fueron encontrados: " + invitadosNoEncontrados);
+                        }
+                        return ResponseEntity.ok(response);
                     } catch (Exception e) {
                         e.printStackTrace();
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "Error al parsear los datos del evento: " + e.getMessage()));
@@ -471,14 +604,52 @@ public class OrganizadorRestController {
                     if (!evento.getOrganizadorId().equals(organizador.getId())) {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No tienes permiso para eliminar este evento."));
                     }
-                    for (String invitadoId : evento.getInvitados()) {
-                        Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
-                        if (invitado != null) {
-                            invitado.getInvitaciones().remove(id);
-                            invitado.getEventosAsistidos().remove(id);
-                            invitadoRepository.save(invitado);
+
+                    // Limpiar referencias en invitados
+                    List<String> invitados = evento.getInvitados();
+                    if (invitados != null) {
+                        for (String invitadoId : invitados) {
+                            Invitado invitado = invitadoRepository.findById(invitadoId).orElse(null);
+                            if (invitado != null) {
+                                List<String> invitaciones = invitado.getInvitaciones();
+                                if (invitaciones != null && invitaciones.contains(id)) {
+                                    invitaciones.remove(id);
+                                    invitado.setInvitaciones(invitaciones);
+                                }
+                                List<String> asistidos = invitado.getEventosAsistidos();
+                                if (asistidos != null && asistidos.contains(id)) {
+                                    asistidos.remove(id);
+                                    invitado.setEventosAsistidos(asistidos);
+                                }
+                                invitadoRepository.save(invitado);
+                                System.out.println("Invitado " + invitadoId + " actualizado - Evento " + id + " eliminado de invitaciones y eventos asistidos.");
+                            }
                         }
                     }
+
+                    // Limpiar referencias en proveedores
+                    Map<String, String> proveedores = evento.getProveedores();
+                    if (proveedores != null) {
+                        for (String proveedorId : proveedores.keySet()) {
+                            Optional<Proveedor> proveedorOpt = proveedorRepository.findById(proveedorId);
+                            if (proveedorOpt.isPresent()) {
+                                Proveedor proveedor = proveedorOpt.get();
+                                List<String> pendientes = proveedor.getEventosPendientes();
+                                if (pendientes != null && pendientes.contains(id)) {
+                                    pendientes.remove(id);
+                                    proveedor.setEventosPendientes(pendientes);
+                                }
+                                List<String> asistidos = proveedor.getEventosAsistidos();
+                                if (asistidos != null && asistidos.contains(id)) {
+                                    asistidos.remove(id);
+                                    proveedor.setEventosAsistidos(asistidos);
+                                }
+                                proveedorRepository.save(proveedor);
+                                System.out.println("Proveedor " + proveedorId + " actualizado - Evento " + id + " eliminado de eventosPendientes y eventosAsistidos.");
+                            }
+                        }
+                    }
+
                     eventoRepository.deleteById(id);
                     long count = eventoRepository.countByOrganizadorId(organizador.getId());
                     organizador.setEventosOrganizados((int) count);

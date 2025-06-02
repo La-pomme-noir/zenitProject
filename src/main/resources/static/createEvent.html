@@ -1,4 +1,4 @@
-	<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -183,6 +183,7 @@
     <script>
         let invitadoTemplate = null;
         let locationTemplate = null;
+        let proveedoresData = {}; // Almacenar los proveedores por categoría
 
         async function loadOrganizadorInfo() {
             try {
@@ -234,6 +235,7 @@
 
         async function loadProveedores() {
             const categorias = ['Sonido e Iluminación', 'Decoración', 'Logística', 'Servicio Personal', 'Taquillería', 'Alimentación', 'Marketing'];
+            proveedoresData = {}; // Reiniciar el objeto
             for (const categoria of categorias) {
                 try {
                     const response = await fetch(`/rest/proveedores/categoria/${encodeURIComponent(categoria)}`, {
@@ -243,6 +245,7 @@
                     });
                     if (!response.ok) throw new Error(`Error: ${response.status} - ${await response.text()}`);
                     const proveedores = await response.json();
+                    proveedoresData[categoria] = proveedores; // Almacenar proveedores por categoría
                     const selectId = `proveedor${categoria.replace(/\s/g, '')}`;
                     const select = document.getElementById(selectId);
                     if (!select) {
@@ -252,8 +255,8 @@
                     select.innerHTML = '<option value="" disabled selected>Selecciona un proveedor</option>';
                     proveedores.forEach(proveedor => {
                         const option = document.createElement('option');
-                        option.value = proveedor.id || proveedor._id || '';
-                        option.textContent = proveedor.nombre || 'Sin nombre';
+                        option.value = proveedor.id || proveedor._id || ''; // Usar ID como valor
+                        option.textContent = proveedor.nombre || 'Sin nombre'; // Mostrar nombre
                         select.appendChild(option);
                     });
                 } catch (error) {
@@ -316,7 +319,7 @@
             const invitados = Array.from(document.querySelectorAll('.invitado-select')).map(select => select.value);
             const cantidadSillas = parseInt(document.getElementById('cantidadSillas').value);
             
-            // Obtener proveedores con verificación de existencia
+            // Construir proveedores con IDs como claves y categorías como valores
             const proveedores = {};
             const proveedorFields = [
                 { key: "Sonido e Iluminación", id: "proveedorSonidoeIluminación" },
@@ -329,12 +332,9 @@
             ];
 
             proveedorFields.forEach(field => {
-                const element = document.getElementById(field.id);
-                if (element) {
-                    proveedores[field.key] = element.value;
-                } else {
-                    console.warn(`Elemento con ID ${field.id} no encontrado`);
-                    proveedores[field.key] = '';
+                const select = document.getElementById(field.id);
+                if (select && select.value) {
+                    proveedores[select.value] = field.key; // ID como clave, categoría como valor
                 }
             });
 
@@ -349,7 +349,7 @@
             }));
 
             // Validación
-            if (!organizadorId || !organizadorNombre || !nombreEvento || !fecha || !invitados.length || !cantidadSillas || !lugar || !hora || !ciudad || !descripcion || !requisitos || !ubicacionesPrecios.length) {
+            if (!organizadorId.value || !organizadorNombre.value || !nombreEvento || !fecha || !invitados.length || !cantidadSillas || !lugar || !hora || !ciudad || !descripcion || !requisitos || !ubicacionesPrecios.length) {
                 alert('Por favor, completa todos los campos, incluyendo al menos una ubicación y precio.');
                 return;
             }
@@ -373,7 +373,7 @@
             formData.append('eventData', JSON.stringify(eventData));
 
             try {
-                console.log('Enviando datos al backend...');
+                console.log('Enviando datos al backend:', eventData); // Depuración
                 const response = await fetch('/rest/organizadores/eventos', {
                     method: 'POST',
                     credentials: 'include',
@@ -411,6 +411,12 @@
                     await loadInvitados();
                 } else {
                     alert(result.message || 'Error al crear el evento.');
+                    if (result.error) {
+                        console.log('Errores con proveedores:', result.error);
+                    }
+                    if (result.warning) {
+                        console.log('Advertencias:', result.warning);
+                    }
                 }
             } catch (error) {
                 console.error('Error al enviar la solicitud:', error);
@@ -436,5 +442,3 @@
             }
         };
     </script>
-</body>
-</html>

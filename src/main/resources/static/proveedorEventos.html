@@ -12,12 +12,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/admin.css">
     <title>Zénit Eventos - Eventos Asignados</title>
-	<style>
-	        /* Estilo estático para el color del texto en las celdas de la tabla */
-	        .table td, th {
-	            color: #FFFFFF; /* Texto blanco para resaltar */
-	        }
-	    </style>
+    <style>
+        .table td, th {
+            color: #FFFFFF;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -26,7 +25,7 @@
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
                 <a href="/proveedor.html" class="navbar__links navbar__links--activo">Proveedor</a>
-                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+                <a href="/logout" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
@@ -35,7 +34,6 @@
         <div class="proveedor">
             <h2 class="title__sections">Eventos Asignados</h2>
             <div class="proveedor-servicios">
-                <!-- Sección de Eventos Pendientes -->
                 <div class="registered-service">
                     <h3 class="servicios-categoria">Eventos Pendientes</h3>
                     <div id="pendingEventsList">
@@ -52,7 +50,6 @@
                         </table>
                     </div>
                 </div>
-                <!-- Sección de Eventos Asistidos -->
                 <div class="registered-service">
                     <h3 class="servicios-categoria">Eventos Asistidos</h3>
                     <div id="attendedEventsList">
@@ -96,108 +93,153 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script>
-        const PROVEEDORES_URL = 'http://localhost:8092/rest/proveedores/correo/katherine@gmail.com';
-        const EVENTOS_URL = 'http://localhost:8092/rest/organizadores/eventos';
-
-        async function loadEvents() {
+        async function loadProveedorEvents() {
             try {
-                // Obtener datos del proveedor
-                const proveedorResponse = await fetch(PROVEEDORES_URL);
-                const proveedor = await proveedorResponse.json();
-                const pendingEvents = proveedor.eventosPendientes || [];
-                const attendedEvents = proveedor.eventosAsistidos || [];
+                // Obtener el perfil del proveedor autenticado
+                const profileResponse = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!profileResponse.ok) throw new Error('No autenticado o perfil no encontrado');
+                const profile = await profileResponse.json();
+                const correo = profile.correo;
 
-                // Obtener detalles de los eventos
-                const eventsResponse = await fetch(EVENTOS_URL);
-                const allEvents = await eventsResponse.json();
+                // Obtener los eventos del proveedor
+                const eventsResponse = await fetch(`/rest/proveedores/${encodeURIComponent(correo)}/eventos?t=${new Date().getTime()}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!eventsResponse.ok) throw new Error(`Error al cargar eventos: ${eventsResponse.status}`);
+                const eventsData = await eventsResponse.json();
 
                 const pendingTableBody = document.getElementById('pendingEventsTable');
                 const attendedTableBody = document.getElementById('attendedEventsTable');
                 pendingTableBody.innerHTML = '';
                 attendedTableBody.innerHTML = '';
 
-                if (pendingEvents.length === 0) {
+                if (eventsData.eventosPendientes.length === 0) {
                     pendingTableBody.innerHTML = '<tr><td colspan="4" class="text-center">No hay eventos pendientes</td></tr>';
                 } else {
-                    pendingEvents.forEach(eventId => {
-                        const evento = allEvents.find(e => e.id === eventId);
-                        if (evento) {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${evento.nombreEvento}</td>
-                                <td>${new Date(evento.fecha).toLocaleDateString()}</td>
-                                <td>${evento.hora || '-'}</td>
-                                <td>
-                                    <button class="btn btn-success btn-sm me-2" onclick="aceptarEvento('${evento.id}')">
-                                        <i class="fas fa-check"></i> Asistir
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="rechazarEvento('${evento.id}')">
-                                        <i class="fas fa-times"></i> No Asistir
-                                    </button>
-                                </td>
-                            `;
-                            pendingTableBody.appendChild(row);
-                        }
+                    eventsData.eventosPendientes.forEach(event => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${event.nombreEvento || 'Sin nombre'}</td>
+                            <td>${event.fecha ? new Date(event.fecha).toLocaleDateString() : 'Sin fecha'}</td>
+                            <td>${event.hora || '-'}</td>
+                            <td>
+                                <button class="btn btn-success btn-sm me-2" onclick="acceptEvent('${event.id}')">
+                                    <i class="fas fa-check"></i> Asistir
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="declineEvent('${event.id}')">
+                                    <i class="fas fa-times"></i> No Asistir
+                                </button>
+                            </td>
+                        `;
+                        pendingTableBody.appendChild(row);
                     });
                 }
 
-                if (attendedEvents.length === 0) {
+                if (eventsData.eventosAsistidos.length === 0) {
                     attendedTableBody.innerHTML = '<tr><td colspan="3" class="text-center">No hay eventos asistidos</td></tr>';
                 } else {
-                    attendedEvents.forEach(eventId => {
-                        const evento = allEvents.find(e => e.id === eventId);
-                        if (evento) {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td>${evento.nombreEvento}</td>
-                                <td>${new Date(evento.fecha).toLocaleDateString()}</td>
-                                <td>${evento.hora || '-'}</td>
-                            `;
-                            attendedTableBody.appendChild(row);
-                        }
+                    eventsData.eventosAsistidos.forEach(event => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${event.nombreEvento || 'Sin nombre'}</td>
+                            <td>${event.fecha ? new Date(event.fecha).toLocaleDateString() : 'Sin fecha'}</td>
+                            <td>${event.hora || '-'}</td>
+                        `;
+                        attendedTableBody.appendChild(row);
                     });
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al cargar los eventos');
+                document.getElementById('pendingEventsTable').innerHTML = '<tr><td colspan="4">Error al cargar eventos</td></tr>';
+                document.getElementById('attendedEventsTable').innerHTML = '<tr><td colspan="3">Error al cargar eventos</td></tr>';
             }
         }
 
-        async function aceptarEvento(eventoId) {
+        async function acceptEvent(eventoId) {
             try {
-                const response = await fetch(`${PROVEEDORES_URL}/accept-event/${eventoId}`, {
-                    method: 'PUT'
+                const profileResponse = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!profileResponse.ok) throw new Error('No autenticado');
+                const profile = await profileResponse.json();
+                const correo = profile.correo;
+
+                console.log(`Intentando aceptar evento ${eventoId} para ${correo}`);
+                const response = await fetch(`/rest/proveedores/correo/${encodeURIComponent(correo)}/accept-event/${encodeURIComponent(eventoId)}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
                 if (response.ok) {
-                    alert('Evento aceptado');
-                    loadEvents();
+                    const result = await response.json();
+                    alert(result.message || 'Evento aceptado');
+                    loadProveedorEvents();
                 } else {
-                    alert('Error al aceptar el evento');
+                    const errorText = await response.text();
+                    throw new Error(`Error al aceptar el evento: ${response.status} - ${errorText}`);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error en la conexión con el servidor');
+                console.error('Error al aceptar evento:', error);
+                alert(`Error al aceptar el evento: ${error.message}`);
             }
         }
 
-        async function rechazarEvento(eventoId) {
+        async function declineEvent(eventoId) {
             try {
-                const response = await fetch(`${PROVEEDORES_URL}/decline-event/${eventoId}`, {
-                    method: 'PUT'
+                const profileResponse = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                if (!profileResponse.ok) throw new Error('No autenticado');
+                const profile = await profileResponse.json();
+                const correo = profile.correo;
+
+                console.log(`Intentando declinar evento ${eventoId} para ${correo}`);
+                const response = await fetch(`/rest/proveedores/correo/${encodeURIComponent(correo)}/decline-event/${encodeURIComponent(eventoId)}`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 });
                 if (response.ok) {
-                    alert('Evento rechazado');
-                    loadEvents();
+                    const result = await response.json();
+                    alert(result.message || 'Evento declinado');
+                    loadProveedorEvents();
                 } else {
-                    alert('Error al rechazar el evento');
+                    const errorText = await response.text();
+                    throw new Error(`Error al declinar el evento: ${response.status} - ${errorText}`);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error en la conexión con el servidor');
+                console.error('Error al declinar evento:', error);
+                alert(`Error al declinar el evento: ${error.message}`);
             }
         }
 
-        window.onload = loadEvents;
+        window.onload = loadProveedorEvents;
     </script>
 </body>
 </html>

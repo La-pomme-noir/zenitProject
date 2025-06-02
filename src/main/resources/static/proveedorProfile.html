@@ -21,7 +21,7 @@
             <span class="header__title">Zenit Eventos</span>
             <nav class="header__navbar">
                 <a href="/proveedor.html" class="navbar__links navbar__links--activo">Panel Proveedor</a>
-                <a href="/index.html" class="navbar__links">Cerrar Sesión</a>
+                <a href="/logout" class="navbar__links">Cerrar Sesión</a>
             </nav>
         </div>
     </header>
@@ -45,142 +45,135 @@
                 </div>
 
                 <button class="custom__button--a" type="button" id="saveImageButton">Guardar Cambios</button>
-				<br><br>
+                <br><br>
                 <a class="custom__button--a" href="/proveedor.html">Volver al Panel</a>
             </div>
         </div>
     </main>
 
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
     <script src="https://kit.fontawesome.com/962fcf7572.js" crossorigin="anonymous"></script>
     <script>
-		async function loadProveedorProfile() {
-		    try {
-		        const response = await fetch('/rest/proveedores/profile', {
-		            method: 'GET',
-		            credentials: 'include',
-		            headers: {
-		                'Content-Type': 'application/json',
-		                'Cache-Control': 'no-cache'
-		            }
-		        });
+        async function loadProveedorProfile() {
+            try {
+                const response = await fetch('/api/proveedores/profile', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    }
+                });
 
-		        if (!response.ok) {
-		            const errorData = await response.json();
-		            throw new Error(errorData.message || `Error al obtener el perfil: ${response.status} - ${response.statusText}`);
-		        }
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Error al obtener el perfil: ${response.status} - ${response.statusText}`);
+                }
 
-		        const profile = await response.json();
-		        console.log('Datos recibidos del servidor:', profile);
+                const profile = await response.json();
+                console.log('Datos recibidos del servidor:', profile);
 
-		        if (profile.role && profile.role !== 'PROVEEDOR') {
-		            throw new Error('Rol no válido o no autorizado para este perfil.');
-		        }
+                if (profile.role && profile.role !== 'PROVEEDOR') {
+                    throw new Error('Rol no válido o no autorizado para este perfil.');
+                }
 
-		        document.getElementById('proveedorNombre').value = profile.nombre || 'N/A';
-		        document.getElementById('proveedorCorreo').value = profile.correo || 'N/A';
-		        const profileImage = document.getElementById('profileImage');
-		        if (profile.imagenUrl) {
-		            profileImage.src = profile.imagenUrl;
-		        } else {
-		            console.log('No se encontró imagenUrl, usando imagen por defecto');
-		        }
-		    } catch (error) {
-		        console.error('Error al cargar el perfil del proveedor:', error.message);
-		        alert('No se pudo cargar el perfil. Detalles: ' + error.message + '\nPor favor, revisa la consola para más información.');
-		    }
-		}
+                document.getElementById('proveedorNombre').value = profile.nombre || 'N/A';
+                document.getElementById('proveedorCorreo').value = profile.correo || 'N/A';
+                const profileImage = document.getElementById('profileImage');
+                if (profile.imagenUrl) {
+                    profileImage.src = profile.imagenUrl;
+                } else {
+                    console.log('No se encontró imagenUrl, usando imagen por defecto');
+                }
+            } catch (error) {
+                console.error('Error al cargar el perfil del proveedor:', error.message);
+                alert('No se pudo cargar el perfil. Detalles: ' + error.message + '\nPor favor, revisa la consola para más información.');
+            }
+        }
 
-		document.getElementById('saveImageButton').addEventListener('click', async () => {
-		    const imagenInput = document.getElementById('imagen');
-		    const imagen = imagenInput.files[0];
+        document.getElementById('saveImageButton').addEventListener('click', async () => {
+            const imagenInput = document.getElementById('imagen');
+            const imagen = imagenInput.files[0];
 
-		    if (!imagen) {
-		        alert('Por favor, selecciona una imagen para subir.');
-		        return;
-		    }
+            if (!imagen) {
+                alert('Por favor, selecciona una imagen para subir.');
+                return;
+            }
 
-		    const formData = new FormData();
-		    formData.append('imagen', imagen);
+            const formData = new FormData();
+            formData.append('imagen', imagen);
 
-		    try {
-		        const response = await fetch('/rest/proveedores/profile/image', {
-		            method: 'PUT',
-		            credentials: 'include',
-		            body: formData
-		        });
+            try {
+                const response = await fetch('/rest/proveedores/profile/image', {
+                    method: 'PUT',
+                    credentials: 'include',
+                    body: formData
+                });
 
-		        // Depuración: Mostrar el código de estado
-		        console.log('Código de estado:', response.status);
+                console.log('Código de estado:', response.status);
 
-		        // Manejar redirecciones (por ejemplo, a una página de login)
-		        if (response.status === 302 || response.redirected) {
-		            alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
-		            window.location.href = '/index.html'; // Redirigir al login
-		            return;
-		        }
+                if (response.status === 302 || response.redirected) {
+                    alert('Sesión expirada. Por favor, inicia sesión nuevamente.');
+                    window.location.href = '/index.html';
+                    return;
+                }
 
-		        // Obtener el texto de la respuesta
-		        const responseText = await response.text();
-		        console.log('Respuesta cruda del servidor:', responseText);
+                const responseText = await response.text();
+                console.log('Respuesta cruda del servidor:', responseText);
 
-		        // Intentar parsear como JSON
-		        let result = {};
-		        if (responseText) {
-		            try {
-		                result = JSON.parse(responseText);
-		            } catch (jsonError) {
-		                console.error('Error al parsear JSON:', jsonError);
-		                if (response.status === 401) {
-		                    alert('No estás autenticado. Por favor, inicia sesión.');
-		                    window.location.href = '/index.html';
-		                    return;
-		                } else {
-		                    alert('Error del servidor: La respuesta no es un JSON válido.');
-		                    return;
-		                }
-		            }
-		        } else {
-		            // Respuesta vacía
-		            if (response.status === 401) {
-		                alert('No estás autenticado. Por favor, inicia sesión.');
-		                window.location.href = '/index.html';
-		                return;
-		            } else {
-		                alert('Error del servidor: Respuesta vacía.');
-		                return;
-		            }
-		        }
+                let result = {};
+                if (responseText) {
+                    try {
+                        result = JSON.parse(responseText);
+                    } catch (jsonError) {
+                        console.error('Error al parsear JSON:', jsonError);
+                        if (response.status === 401) {
+                            alert('No estás autenticado. Por favor, inicia sesión.');
+                            window.location.href = '/index.html';
+                            return;
+                        } else {
+                            alert('Error del servidor: La respuesta no es un JSON válido.');
+                            return;
+                        }
+                    }
+                } else {
+                    if (response.status === 401) {
+                        alert('No estás autenticado. Por favor, inicia sesión.');
+                        window.location.href = '/index.html';
+                        return;
+                    } else {
+                        alert('Error del servidor: Respuesta vacía.');
+                        return;
+                    }
+                }
 
-		        if (response.ok) {
-		            alert(result.message || 'Imagen actualizada exitosamente.');
-		            const profileImage = document.getElementById('profileImage');
-		            if (result.imagenUrl) {
-		                profileImage.src = result.imagenUrl;
-		            }
-		            imagenInput.value = '';
-		        } else {
-		            if (response.status === 401) {
-		                alert('No estás autenticado. Por favor, inicia sesión.');
-		                window.location.href = '/index.html';
-		            } else if (response.status === 404) {
-		                alert('Proveedor no encontrado.');
-		            } else if (response.status === 400) {
-		                alert(result.message || 'Solicitud inválida.');
-		            } else if (response.status === 500) {
-		                alert(result.message || 'Error en el servidor al subir la imagen.');
-		            } else {
-		                alert(result.message || 'Error al actualizar la imagen.');
-		            }
-		        }
-		    } catch (error) {
-		        console.error('Error al enviar la imagen:', error);
-		        alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
-		    }
-		});
+                if (response.ok) {
+                    alert(result.message || 'Imagen actualizada exitosamente.');
+                    const profileImage = document.getElementById('profileImage');
+                    if (result.imagenUrl) {
+                        profileImage.src = result.imagenUrl;
+                    }
+                    imagenInput.value = '';
+                } else {
+                    if (response.status === 401) {
+                        alert('No estás autenticado. Por favor, inicia sesión.');
+                        window.location.href = '/index.html';
+                    } else if (response.status === 404) {
+                        alert('Proveedor no encontrado.');
+                    } else if (response.status === 400) {
+                        alert(result.message || 'Solicitud inválida.');
+                    } else if (response.status === 500) {
+                        alert(result.message || 'Error en el servidor al subir la imagen.');
+                    } else {
+                        alert(result.message || 'Error al actualizar la imagen.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error al enviar la imagen:', error);
+                alert('Error de conexión: ' + error.message + '. Intenta de nuevo.');
+            }
+        });
 
         window.onload = loadProveedorProfile;
     </script>

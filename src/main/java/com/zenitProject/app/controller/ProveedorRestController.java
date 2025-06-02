@@ -60,7 +60,6 @@ public class ProveedorRestController {
     public ResponseEntity<Proveedor> getProveedorByCorreo(@PathVariable String correo) {
         Proveedor proveedor = proveedorRepository.findByCorreo(correo);
         if (proveedor != null) {
-            // Limpiar eventos pendientes y asistidos inválidos
             List<String> validPendientes = proveedor.getEventosPendientes().stream()
                 .filter(eventoId -> eventoId != null && eventoRepository.existsById(eventoId))
                 .collect(Collectors.toList());
@@ -253,8 +252,17 @@ public class ProveedorRestController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/correo/{correo}/accept-event/{eventoId}")
-    public ResponseEntity<Map<String, String>> acceptEvent(@PathVariable String correo, @PathVariable String eventoId) {
+    @PostMapping("/correo/{correo}/accept-event/{eventoId}")
+    public ResponseEntity<Map<String, String>> acceptEvent(@PathVariable String correo, @PathVariable String eventoId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No autenticado"));
+        }
+
+        String usuarioCorreo = authentication.getName();
+        if (!usuarioCorreo.equals(correo)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No autorizado"));
+        }
+
         Proveedor proveedor = proveedorRepository.findByCorreo(correo);
         if (proveedor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Proveedor no encontrado"));
@@ -264,15 +272,26 @@ public class ProveedorRestController {
             return ResponseEntity.badRequest().body(Map.of("message", "El evento no está en los pendientes del proveedor"));
         }
 
+        System.out.println("Aceptando evento " + eventoId + " para proveedor " + correo);
         proveedor.getEventosPendientes().remove(eventoId);
         proveedor.getEventosAsistidos().add(eventoId);
         proveedorRepository.save(proveedor);
+        System.out.println("Evento " + eventoId + " movido a eventosAsistidos para proveedor " + correo);
 
         return ResponseEntity.ok(Map.of("message", "Evento aceptado con éxito"));
     }
 
-    @PutMapping("/correo/{correo}/decline-event/{eventoId}")
-    public ResponseEntity<Map<String, String>> declineEvent(@PathVariable String correo, @PathVariable String eventoId) {
+    @PostMapping("/correo/{correo}/decline-event/{eventoId}")
+    public ResponseEntity<Map<String, String>> declineEvent(@PathVariable String correo, @PathVariable String eventoId, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No autenticado"));
+        }
+
+        String usuarioCorreo = authentication.getName();
+        if (!usuarioCorreo.equals(correo)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No autorizado"));
+        }
+
         Proveedor proveedor = proveedorRepository.findByCorreo(correo);
         if (proveedor == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Proveedor no encontrado"));
@@ -282,6 +301,7 @@ public class ProveedorRestController {
             return ResponseEntity.badRequest().body(Map.of("message", "El evento no está en los pendientes del proveedor"));
         }
 
+        System.out.println("Declinando evento " + eventoId + " para proveedor " + correo);
         proveedor.getEventosPendientes().remove(eventoId);
         proveedorRepository.save(proveedor);
 
@@ -291,10 +311,58 @@ public class ProveedorRestController {
             String proveedorId = proveedor.getId();
             evento.getProveedores().remove(proveedorId);
             eventoRepository.save(evento);
+            System.out.println("Proveedor " + proveedorId + " eliminado del evento " + eventoId);
         } else {
             return ResponseEntity.badRequest().body(Map.of("message", "Evento no encontrado"));
         }
 
-        return ResponseEntity.ok(Map.of("message", "Evento rechazado y proveedor eliminado del evento"));
+        return ResponseEntity.ok(Map.of("message", "Evento declinado con éxito"));
+    }
+
+    @GetMapping("/{correo}/eventos")
+    public ResponseEntity<Map<String, Object>> getProveedorEvents(@PathVariable String correo, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "No autenticado"));
+        }
+
+        String usuarioCorreo = authentication.getName();
+        if (!usuarioCorreo.equals(correo)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "No autorizado"));
+        }
+
+        Proveedor proveedor = proveedorRepository.findByCorreo(correo);
+        if (proveedor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Proveedor no encontrado"));
+        }
+
+        List<Evento> allEvents = eventoRepository.findAll();
+        List<Map<String, Object>> eventosPendientes = allEvents.stream()
+            .filter(evento -> proveedor.getEventosPendientes().contains(evento.getId()))
+            .map(evento -> {
+                Map<String, Object> eventoMap = new HashMap<>();
+                eventoMap.put("id", evento.getId());
+                eventoMap.put("nombreEvento", evento.getNombreEvento());
+                eventoMap.put("fecha", evento.getFecha());
+                eventoMap.put("hora", evento.getHora());
+                return eventoMap;
+            })
+            .collect(Collectors.toList());
+
+        List<Map<String, Object>> eventosAsistidos = allEvents.stream()
+            .filter(evento -> proveedor.getEventosAsistidos().contains(evento.getId()))
+            .map(evento -> {
+                Map<String, Object> eventoMap = new HashMap<>();
+                eventoMap.put("id", evento.getId());
+                eventoMap.put("nombreEvento", evento.getNombreEvento());
+                eventoMap.put("fecha", evento.getFecha());
+                eventoMap.put("hora", evento.getHora());
+                return eventoMap;
+            })
+            .collect(Collectors.toList());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("eventosPendientes", eventosPendientes);
+        response.put("eventosAsistidos", eventosAsistidos);
+        return ResponseEntity.ok(response);
     }
 }
